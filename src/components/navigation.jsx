@@ -1,4 +1,10 @@
-export const Navigation = (props) => {
+import React from 'react';
+import { Link } from 'react-router-dom';
+import {ApiRoutes} from '../config/routes';
+
+const Navigation = (props) => {
+  const { urls } = ApiRoutes();
+
   return (
     <nav id='menu' className='navbar navbar-default navbar-fixed-top'>
       <div className='container'>
@@ -21,33 +27,20 @@ export const Navigation = (props) => {
         </div>
 
         <div
-          className='collapse navbar-collapse'
+          className='collapse navbar-collapse' 
           id='bs-example-navbar-collapse-1'
         >
           <ul className='nav navbar-nav navbar-right'>
-            <li>
-              <a href='#home' className='page-scroll'>
-                Inicio
-              </a>
-            </li>
-            <li>
-              <a href='#features' className='page-scroll'>
-                Characters
-              </a>
-            </li>
-            <li>
-              <a href='#about' className='page-scroll'>
-                Comics
-              </a>
-            </li>
-            <li>
-              <a href='#services' className='page-scroll'>
-                Stories
-              </a>
-            </li>
+            {urls?.children && urls?.children?.map((url, index) => (
+                <li key={index}>
+                   <Link  to={url.path} className='page-scroll'>{url.title}</Link>
+                </li>
+            ))}
           </ul>
         </div>
       </div>
     </nav>
   )
 }
+
+export default Navigation;

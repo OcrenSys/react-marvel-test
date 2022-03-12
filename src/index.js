@@ -1,12 +1,28 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+
 import reportWebVitals from './reportWebVitals';
+import {ApiRoutes} from './config/routes';
+import App from './App';
+import './index.css';
+
+const {urls} = ApiRoutes()
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <BrowserRouter>
+      <App />
+
+      <Routes>
+        <Route path="/">
+        <Route index element={urls.children[0].element} />
+          {urls.children.map(({path, element}, i) => (
+            <Route key={i} path={path} element={element} />
+          ))}
+        </Route>
+      </Routes>
+    </BrowserRouter>
   </React.StrictMode>,
   document.getElementById('root')
 );
