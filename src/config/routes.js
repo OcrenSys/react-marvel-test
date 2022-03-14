@@ -1,9 +1,9 @@
 import React from 'react';
-import { About } from "../components/about";
-import { Gallery } from "../components/gallery";
-import { Contact } from "../components/contact";
 import { RouteURLS } from '../constant/routes';
 import App from '../App';
+import { Characters } from '../components/characters';
+import { Comics } from '../components/comics';
+import { Stories } from '../components/stories';
 
 
 export const ApiRoutes = () => {
@@ -13,17 +13,17 @@ export const ApiRoutes = () => {
         children: [
             {
                 path: RouteURLS.CHARACTERS.ROOT,
-                element: <Contact />,
+                element: <Characters />,
                 title: 'Characters'
             },
             {
                 path: RouteURLS.COMICS.ROOT,
-                element: <Gallery />,
+                element: <Comics />,
                 title: 'Comics'
             },
             {
                 path: RouteURLS.STORIES.ROOT,
-                element: <About />,
+                element: <Stories />,
                 title: 'Stories'
             },
         ]
