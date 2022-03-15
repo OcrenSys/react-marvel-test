@@ -1,9 +1,9 @@
 import React from "react";
 import { Link, Outlet } from "react-router-dom";
-import { ApiRoutes } from "../config/routes";
+import routesConfig from "../config/routesConfig";
 
 const Layout = (props) => {
-  const { urls } = ApiRoutes();
+  const urls = routesConfig();
 
   return (
     <div>
@@ -32,8 +32,7 @@ const Layout = (props) => {
             id="bs-example-navbar-collapse-1"
           >
             <ul className="nav navbar-nav navbar-right">
-              {urls?.children &&
-                urls?.children?.map((url, index) => (
+              {urls?.lenght && urls?.map((url, index) => (
                   <li key={index}>
                     <Link to={url.path} className="page-scroll">
                       {url.title}

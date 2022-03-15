@@ -1,6 +1,8 @@
 import { configureStore } from "@reduxjs/toolkit";
+import { TCharacters } from "../types/characters";
+import { TMenuSelected } from "../types/menu";
+import { TData } from "../types/Response";
 import appReducer from './reducers'
-import { TMenuSelected } from "./states/menu.state";
 
 const store = configureStore({
     reducer: appReducer,
@@ -8,7 +10,8 @@ const store = configureStore({
   });
   
   export type TAppState = {
-    menuSelected: TMenuSelected;
+    menuSelected: TMenuSelected,
+    characters: TData<TCharacters>
 };
 
 export default store;

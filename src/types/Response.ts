@@ -1,14 +1,20 @@
-export interface IResponse {
+export type TResponse <T> = {
   code: number;
   status: string;
   etag: String;
-  data: IData;
-}
+  data: TData <T> ;
+};
 
-interface IData {
+export type TData <T>  = {
   offset: number;
   limit: number;
   total: number;
   count: number;
-  results: any[];
-}
+  results: T[];
+};
+
+
+export type TThumbnail = {
+  path: string;
+  extension: string;
+};
