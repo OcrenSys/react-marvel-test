@@ -1,12 +1,13 @@
-import { TCharacters } from "../../types/characters";
-import { TData } from "../../types/Response";
-
-const CharactersInitialState: TData<TCharacters> = {
+const CharactersInitialState = {
     offset: 0,
     limit: 0, 
     total: 0,
     count: 0,
-    results: []
+    results: [],
+    loading: false,
+    error: false
 }
+
+
 
 export default CharactersInitialState;

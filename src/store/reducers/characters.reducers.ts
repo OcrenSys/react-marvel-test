@@ -5,29 +5,22 @@ import CharactersInitialState from "../states/characters.state";
 const charactersReducer = createReducer(CharactersInitialState, (builder) => {
   builder.addCase(RETRIEVE_CHARACTERS.pending, (state) => ({
     ...state,
-    data: {
-      loading: true,
-      error: false,
-      characters: {},
-    },
+    loading: true,
+    error: false,
+    results: [],
   }));
   builder.addCase(RETRIEVE_CHARACTERS.rejected, (state) => ({
     ...state,
-    data: {
-      loading: false,
-      error: true,
-      characters: {},
-    },
+    loading: false,
+    error: true,
+    results: [],
   }));
   builder.addCase(RETRIEVE_CHARACTERS.fulfilled, (state, { payload }) => ({
     ...state,
-    data: {
-      loading: true,
-      error: false,
-      characters: payload,
-    },
+    ...payload,
+    loading: false,
+    error: false,
   }));
 });
 
-
-export default charactersReducer
+export default charactersReducer;

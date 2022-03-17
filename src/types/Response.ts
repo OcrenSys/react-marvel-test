@@ -1,16 +1,20 @@
-export type TResponse <T> = {
+import { TCharacters } from "./characters";
+
+export type TResponse  = {
   code: number;
   status: string;
   etag: String;
-  data: TData <T> ;
+  data: TData;
 };
 
-export type TData <T>  = {
+export type TData  = {
   offset: number;
   limit: number;
   total: number;
   count: number;
-  results: T[];
+  loading: boolean;
+  error: boolean;
+  results: TCharacters [];
 };
 
 

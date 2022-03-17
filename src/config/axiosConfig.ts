@@ -11,6 +11,7 @@ const axiosConfig = axios.create({
     apikey: environment.REACT_API_PUBLIC_KEY,
     hash: environment.HASH
   },
+  baseURL: environment.BASE_URL,
 }); 
 
 export default axiosConfig;
