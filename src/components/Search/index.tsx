@@ -4,7 +4,7 @@ import SearchIcon from "@mui/icons-material/Search";
 type TSearchProps = {
   label?: string;
   value?: string;
-  variant?:  "filled" | "standard" | "outlined" | undefined;
+  variant?: "filled" | "standard" | "outlined" | undefined;
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 };
 

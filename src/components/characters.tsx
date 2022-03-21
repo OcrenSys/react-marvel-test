@@ -1,40 +1,49 @@
-import { Typography } from "@mui/material";
+import {
+  AutocompleteChangeDetails,
+  AutocompleteChangeReason,
+  Typography,
+} from "@mui/material";
 import { useEffect, useMemo, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { SelectChangeEvent } from "@mui/material/Select";
-
-import { GET_CHARACTERS_STATE } from "../store/selectors/characters.selector";
+import { useSelector } from "react-redux";
+import { GET_CHARACTERS_SELECTOR } from "../store/selectors/characters.selector";
 import TCharacter from "../types/character";
 import { Image } from "./image";
 import useDebounce from "../hooks/useDebounce";
 import SearchComponent from "./Search";
 import Spinner from "./Spinners";
-import SelectComics from "./Select/SelectComics";
+import AutoCompleteFilter from "./Select/AutoCompleteFilter";
+import { hasComic, hasSearch } from "../utils/helpers";
 import { RETRIEVE_COMICS } from "../store/actions/comic.actions";
-import { hasComic } from "../utils/helpers";
+import { AnyAction } from "@reduxjs/toolkit";
 
 export const Characters = (): React.ReactElement => {
-  const { loading, results } = useSelector(GET_CHARACTERS_STATE);
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    dispatch(RETRIEVE_COMICS());
-  }, [dispatch]);
+  const { loading, results } = useSelector(GET_CHARACTERS_SELECTOR);
 
   const [search, setSearch] = useState<string>();
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [comicSelected, setComicSelected] = useState<string>("");
-  const debounced = useDebounce(search, 600);
+  const [comicSelected, setComicSelected] = useState<{
+    label: string;
+    id: string;
+  }>({ label: "", id: "" });
+  const debounced: string = useDebounce(search, 600);
 
   let characters: TCharacter[] = useMemo(() => {
     setIsLoading(false);
-    return results.filter(
-      (character: TCharacter) =>
-        character.name.toLowerCase().includes(debounced.toLowerCase()) &&
-        (!!comicSelected
-          ? hasComic(character?.comics?.items, comicSelected)
-          : true)
-    );
+
+    let result: TCharacter[] = results;
+
+    console.log(debounced)
+    if (debounced)
+      result = results.filter((character: TCharacter) =>
+        hasSearch(character.name, debounced)
+      );
+
+    if (comicSelected?.id)
+      result = results.filter((character: TCharacter) =>
+        hasComic(character?.comics?.items, comicSelected?.id)
+      );
+
+    return result;
   }, [results, debounced, comicSelected]);
 
   const handleChangeSearch = ({
@@ -45,8 +54,12 @@ export const Characters = (): React.ReactElement => {
     setSearch(value);
   };
 
-  const handleChangeSelect = ({ target }: SelectChangeEvent) => {
-    const { value } = target;
+  const handleChangeAutoComplete = (
+    event: React.SyntheticEvent,
+    value: { label: string; id: string },
+    reason: AutocompleteChangeReason,
+    details?: AutocompleteChangeDetails<any>
+  ) => {
     setIsLoading(true);
     setComicSelected(value);
   };
@@ -54,6 +67,12 @@ export const Characters = (): React.ReactElement => {
   useEffect(() => {
     setIsLoading(loading);
   }, [loading]);
+
+  const handleDistpach = (titleStartsWith: string): AnyAction => {
+    return RETRIEVE_COMICS({
+      titleStartsWith: titleStartsWith || "",
+    })
+  }
 
   const RenderCharacters = (): React.ReactElement | React.ReactElement[] =>
     characters.length ? (
@@ -82,14 +101,16 @@ export const Characters = (): React.ReactElement => {
             dapibus leonec.
           </p>
           <div className="content-center-row">
-            <SelectComics
-              value={comicSelected}
+            <AutoCompleteFilter
               variant={"outlined"}
-              onChange={handleChangeSelect}
+              onDispatch={handleDistpach}
+              onChange={handleChangeAutoComplete}
             />
+            <hr />
             <SearchComponent
               label="Search characters"
               variant={"outlined"}
+              value={search}
               onChange={handleChangeSearch}
             ></SearchComponent>
           </div>

@@ -1,50 +1,62 @@
 import React from "react";
-import { FormControl, InputLabel, MenuItem } from "@mui/material";
-import Select, { SelectChangeEvent } from "@mui/material/Select";
-type TItem = { key: string; value: string };
+import {
+  Autocomplete,
+  AutocompleteChangeDetails,
+  AutocompleteChangeReason,
+  AutocompleteInputChangeReason,
+  FormControl,
+  TextField,
+} from "@mui/material";
+import { TOption } from "../../types/TOption";
 
-type TSelectProps = {
+type TAutoCompleteProps = {
   label: string;
   variant: "filled" | "standard" | "outlined" | undefined;
-  value?: TItem;
-  values: TItem[];
-  onChange: (event: SelectChangeEvent) => void;
+  value?: TOption;
+  values: TOption[];
+  onChange: (
+    event: React.SyntheticEvent,
+    value: any,
+    reason: AutocompleteChangeReason,
+    details?: AutocompleteChangeDetails<any>
+  ) => void;
+  onInputChange: (
+    event: React.SyntheticEvent,
+    value: string,
+    reason: AutocompleteInputChangeReason
+  ) => void;
 };
 
-const SelectComponent = (props: TSelectProps) => {
-  const { label, value, values, variant, onChange } = props;
-  console.log("SelectComponent...", value);
-
+const AutoComplete = (props: TAutoCompleteProps) => {
+  const { label, value, values, variant, onChange, onInputChange } = props;
+  
   return (
-    <FormControl variant={variant} sx={{ minWidth: 150 }}>
-      <InputLabel style={{ top: "0" }} margin="dense" id="select-label-id">
-        {label}
-      </InputLabel>
-
-      <Select
-        labelId="select-label-id"
-        id="select-id"
+    <FormControl variant={variant} sx={{ minWidth: 200, maxWidth: 250 }}>
+      <Autocomplete
+        disablePortal
         size="small"
-        value={value?.value}
-        label={label}
+        id={`Autocomplete-${label}`}
+        value={value}
+        options={values}
+        noOptionsText={`No results...`}
         onChange={onChange}
-      >
-        <MenuItem value={0}>
-          <em>ninguno</em>
-        </MenuItem>
-        {values.map(({ key, value }) => (
-          <MenuItem key={value} value={value}>
-            {value} - {key}
-          </MenuItem>
-        ))}
-      </Select>
+        onInputChange={onInputChange}
+        sx={{ minWidth: 200, maxWidth: 250 }}
+        renderInput={(params) => (
+          <TextField
+            {...params}
+            label={label}
+            
+          />
+        )}
+      />
     </FormControl>
   );
 };
 
-SelectComponent.defaultProps = {
+AutoComplete.defaultProps = {
   variant: "standard",
   value: undefined,
 };
 
-export default SelectComponent;
+export default AutoComplete;

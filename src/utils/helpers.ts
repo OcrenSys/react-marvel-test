@@ -1,17 +1,17 @@
-import { TItem } from "../types/Response";
+import { GET_CHARACTERS_SELECTOR } from "../store/selectors/characters.selector";
+import { GET_COMICS_SELECTOR } from "../store/selectors/comics.selector";
+import { TData, TItem } from "../types/Response";
 
 export const getComicIdByResourceURI = (resourceURI: string): string => {
-    console.log('getComicIdByResourceURI', resourceURI)
-    const elements = resourceURI.split('/');
-    return elements[elements.length-1];
-}
+  const elements = resourceURI.split("/");
+  return elements[elements.length - 1];
+};
 
-export const hasComic = (items: TItem[], comicId: string): boolean => {
-    // console.log("hasComic.items...", items)
-   // debugger
+export const hasComic = (items: TItem[], comicId: string): boolean =>
+  items.some(
+    (item: TItem) =>
+      getComicIdByResourceURI(item.resourceURI).toString() === comicId
+  );
 
-    return items.some((item: TItem) => {
-        // console.log("item.name...", item.name)
-        return getComicIdByResourceURI(item.resourceURI).toString() === comicId
-    })
-}
+export const hasSearch = (property: string, search: string): boolean =>
+  property.toLowerCase().includes(search.toLowerCase());
