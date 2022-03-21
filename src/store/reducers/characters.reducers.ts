@@ -1,8 +1,8 @@
 import { createReducer } from "@reduxjs/toolkit";
 import { RETRIEVE_CHARACTERS } from "../actions/characters.action";
-import CharactersInitialState from "../states/characters.state";
+import DataInitialState from "../states/data.state";
 
-const charactersReducer = createReducer(CharactersInitialState, (builder) => {
+const charactersReducer = createReducer(DataInitialState, (builder) => {
   builder.addCase(RETRIEVE_CHARACTERS.pending, (state) => ({
     ...state,
     loading: true,

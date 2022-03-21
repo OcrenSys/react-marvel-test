@@ -2,8 +2,8 @@ import React from "react";
 import { RouteObject, useRoutes } from "react-router-dom";
 import { Characters } from "../components/characters";
 import { Comics } from "../components/comics";
-import Layout from "../components/layout";
 import { Stories } from "../components/stories";
+import Layout from "../components/layout";
 
 const Router = (): React.ReactElement | null => {
     let routes: RouteObject [] = [

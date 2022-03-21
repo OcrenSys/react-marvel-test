@@ -362,6 +362,7 @@ header .intro-text {
   overflow: hidden;
   position: relative;
   margin: 0;
+  max-height: 250px;
 }
 .hover-bg .hover-text {
   position: absolute;
@@ -597,6 +598,20 @@ label {
 }
 #footer a:hover {
   border-bottom: 2px solid #608dfd;
+}
+
+.content-center-row {
+  display: flex;
+  align-items: center;
+  align-content: center;
+  flex-direction: row;
+  justify-content: center;
+}
+.content-center-column {
+  display: flex;
+  align-items: center;
+  align-content: center;
+  flex-direction: column;
 }
 
 @media (max-width: 768px) {
