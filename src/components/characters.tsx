@@ -3,7 +3,7 @@ import {
   AutocompleteChangeReason,
   Typography,
 } from "@mui/material";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 import { GET_CHARACTERS_SELECTOR } from "../store/selectors/characters.selector";
 import TCharacter from "../types/character";
@@ -11,10 +11,10 @@ import { Image } from "./image";
 import useDebounce from "../hooks/useDebounce";
 import SearchComponent from "./Search";
 import Spinner from "./Spinners";
-import AutoCompleteFilter from "./Select/AutoCompleteFilter";
 import { hasComic, hasSearch } from "../utils/helpers";
 import { RETRIEVE_COMICS } from "../store/actions/comic.actions";
 import { AnyAction } from "@reduxjs/toolkit";
+import AutoCompleteFilter from "./Select/AutoCompleteFilter";
 
 export const Characters = (): React.ReactElement => {
   const { loading, results } = useSelector(GET_CHARACTERS_SELECTOR);
@@ -32,7 +32,6 @@ export const Characters = (): React.ReactElement => {
 
     let result: TCharacter[] = results;
 
-    console.log(debounced)
     if (debounced)
       result = results.filter((character: TCharacter) =>
         hasSearch(character.name, debounced)
@@ -54,25 +53,25 @@ export const Characters = (): React.ReactElement => {
     setSearch(value);
   };
 
-  const handleChangeAutoComplete = (
-    event: React.SyntheticEvent,
-    value: { label: string; id: string },
-    reason: AutocompleteChangeReason,
-    details?: AutocompleteChangeDetails<any>
-  ) => {
-    setIsLoading(true);
-    setComicSelected(value);
-  };
+  const handleChangeAutoComplete = useCallback((
+      event: React.SyntheticEvent,
+      value: { label: string; id: string },
+      reason: AutocompleteChangeReason,
+      details?: AutocompleteChangeDetails<any>
+    ) => {
+      setIsLoading(true);
+      setComicSelected(value);
+    },
+    [setIsLoading, setComicSelected]
+  );
+
+  const handleDistpach = useCallback((titleStartsWith: string): AnyAction => {
+    return RETRIEVE_COMICS({ titleStartsWith: titleStartsWith || "" });
+  }, []);
 
   useEffect(() => {
     setIsLoading(loading);
   }, [loading]);
-
-  const handleDistpach = (titleStartsWith: string): AnyAction => {
-    return RETRIEVE_COMICS({
-      titleStartsWith: titleStartsWith || "",
-    })
-  }
 
   const RenderCharacters = (): React.ReactElement | React.ReactElement[] =>
     characters.length ? (
@@ -103,10 +102,10 @@ export const Characters = (): React.ReactElement => {
           <div className="content-center-row">
             <AutoCompleteFilter
               variant={"outlined"}
+              value={comicSelected}
               onDispatch={handleDistpach}
               onChange={handleChangeAutoComplete}
             />
-            <hr />
             <SearchComponent
               label="Search characters"
               variant={"outlined"}

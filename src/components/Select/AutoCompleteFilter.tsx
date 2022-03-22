@@ -4,17 +4,16 @@ import {
   AutocompleteInputChangeReason,
 } from "@mui/material";
 import { AnyAction } from "@reduxjs/toolkit";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import AutoComplete from ".";
 import useDebounce from "../../hooks/useDebounce";
 import { GET_COMICS_SELECTOR } from "../../store/selectors/comics.selector";
-import TComic from "../../types/comic";
 import { TParameters } from "../../types/parameters";
 import { TOption } from "../../types/TOption";
 
 type TAutoCompleteFilterProps = {
-  selector?: "CHARACTER" | "COMIC" | "STORIES",
+  selector?: "CHARACTER" | "COMIC" | "STORIES";
   variant: "filled" | "standard" | "outlined" | undefined;
   value?: TOption;
   onDispatch: (titleStartsWith: string) => AnyAction;
@@ -30,7 +29,7 @@ const AutoCompleteFilter = (props: TAutoCompleteFilterProps) => {
   /* redux inicialization  */
   const dispatch = useDispatch();
   const { loading, results } = useSelector(GET_COMICS_SELECTOR);
-
+  
   /* variables initialization */
   const { variant, value, onChange, onDispatch } = props;
   const [search, setSearch] = useState<string>();
@@ -61,6 +60,7 @@ const AutoCompleteFilter = (props: TAutoCompleteFilterProps) => {
   return (
     <AutoComplete
       label={"Select Comic"}
+      loading={loading}
       value={value}
       values={results.map(({ title, id }) => ({
         label: `${id} | ${title}`,
@@ -77,4 +77,4 @@ AutoCompleteFilter.defaultProps = {
   value: undefined,
 };
 
-export default AutoCompleteFilter;
+export default React.memo(AutoCompleteFilter);
