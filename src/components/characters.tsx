@@ -4,7 +4,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { GET_CHARACTERS_SELECTOR } from "../store/selectors/characters.selector";
 import TCharacter from "../types/character";
 import { Image } from "./image";
@@ -14,69 +14,101 @@ import Spinner from "./Spinners";
 import { hasComic, hasSearch } from "../utils/helpers";
 import { RETRIEVE_COMICS } from "../store/actions/comic.actions";
 import { AnyAction } from "@reduxjs/toolkit";
-import AutoCompleteFilter from "./Select/AutoCompleteFilter";
+import AutoCompleteFilter from "./Autocomplete/AutoCompleteFilter";
+import InfiniteScroll from "react-infinite-scroll-component";
+import { TOption } from "../types/TOption";
+import { constants } from "../utils/constant";
+import { RETRIEVE_CHARACTERS } from "../store/actions/characters.action";
+
+let loadNextTimeout: NodeJS.Timeout;
 
 export const Characters = (): React.ReactElement => {
-  const { loading, results } = useSelector(GET_CHARACTERS_SELECTOR);
+  const dispatch = useDispatch();
+
+  const { loading, results, count, limit, total } = useSelector(
+    GET_CHARACTERS_SELECTOR
+  );
 
   const [search, setSearch] = useState<string>();
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [comicSelected, setComicSelected] = useState<{
-    label: string;
-    id: string;
-  }>({ label: "", id: "" });
+  const [offset, setOffset] = useState<number>(0);
+  const [hasMore, setHasMore] = useState<boolean>(true);
+  const [characters, setCharacters] = useState<TCharacter[]>([]);
+  const [comicSelected, setComicSelected] = useState<TOption>({
+    label: "",
+    id: "",
+  });
   const debounced: string = useDebounce(search, 600);
 
-  let characters: TCharacter[] = useMemo(() => {
-    setIsLoading(false);
-
-    let result: TCharacter[] = results;
+  let data: TCharacter[] = useMemo(() => {
+    let result: TCharacter[] = characters;
 
     if (debounced)
-      result = results.filter((character: TCharacter) =>
+      result = characters.filter((character: TCharacter) =>
         hasSearch(character.name, debounced)
       );
 
     if (comicSelected?.id)
-      result = results.filter((character: TCharacter) =>
+      result = characters.filter((character: TCharacter) =>
         hasComic(character?.comics?.items, comicSelected?.id)
       );
 
     return result;
-  }, [results, debounced, comicSelected]);
+  }, [characters, debounced, comicSelected]);
 
   const handleChangeSearch = ({
     target,
   }: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = target;
-    setIsLoading(true);
     setSearch(value);
   };
 
-  const handleChangeAutoComplete = useCallback((
+  const handleChangeAutoComplete = useCallback(
+    (
       event: React.SyntheticEvent,
       value: { label: string; id: string },
       reason: AutocompleteChangeReason,
       details?: AutocompleteChangeDetails<any>
     ) => {
-      setIsLoading(true);
       setComicSelected(value);
     },
-    [setIsLoading, setComicSelected]
+    [setComicSelected]
   );
 
   const handleDistpach = useCallback((titleStartsWith: string): AnyAction => {
     return RETRIEVE_COMICS({ titleStartsWith: titleStartsWith || "" });
   }, []);
 
+  const handleNext = () => {
+    console.log("handleNext...");
+    setHasMore(false);
+    clearTimeout(loadNextTimeout);
+
+    loadNextTimeout = setTimeout(() => {
+      setOffset((prev) => prev + constants.offset);
+    }, 3000);
+  };
+
   useEffect(() => {
-    setIsLoading(loading);
-  }, [loading]);
+    console.log("setCharacters...");
+
+    setHasMore(true);
+    setCharacters((prev) => [...prev, ...results]);
+  }, [results, offset]);
+
+  useEffect(() => {
+    dispatch(RETRIEVE_CHARACTERS({ offset: offset || 0 }));
+  }, [dispatch, offset]);
+
+  const RenderContainer = (): React.ReactElement | React.ReactElement[] => (
+    <div className="content-center-row">
+      <div className="portfolio-items">{RenderCharacters()}</div>
+    </div>
+  );
 
   const RenderCharacters = (): React.ReactElement | React.ReactElement[] =>
-    characters.length ? (
-      characters?.map((c: TCharacter, i: number) => (
-        <div key={i} className="col-sm-6 col-md-4 col-lg-4">
+    data.length ? (
+      data?.map((c: TCharacter, i: number) => (
+        <div key={i} className="col-sm-4 col-md-3 col-lg-3">
           <Image
             title={c.name}
             largeImage={`${c.thumbnail.path}.${c.thumbnail.extension}`}
@@ -91,7 +123,7 @@ export const Characters = (): React.ReactElement => {
     );
 
   return (
-    <div id="portfolio" className="text-center">
+    <div className="text-center">
       <div className="container">
         <div className="section-title">
           <h2>Characters</h2>
@@ -115,10 +147,22 @@ export const Characters = (): React.ReactElement => {
           </div>
         </div>
 
-        <div className="row">
-          <div className="portfolio-items">
-            {!isLoading ? RenderCharacters() : <Spinner />}
-          </div>
+        <div id="scrollableDiv">
+          <InfiniteScroll
+            dataLength={characters.length}
+            next={handleNext}
+            // style={{ display: "flex", flexDirection: "column-reverse" }} //To put endMessage and loader to the top.
+            hasMore={hasMore}
+            loader={
+              <Typography variant="h5" gutterBottom component="div">
+                Loading
+              </Typography>
+            }
+            height={"70vh"}
+            scrollableTarget="scrollableDiv"
+          >
+            {RenderContainer()}
+          </InfiniteScroll>
         </div>
       </div>
     </div>

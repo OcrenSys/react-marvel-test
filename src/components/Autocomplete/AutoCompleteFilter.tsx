@@ -29,7 +29,7 @@ const AutoCompleteFilter = (props: TAutoCompleteFilterProps) => {
   /* redux inicialization  */
   const dispatch = useDispatch();
   const { loading, results } = useSelector(GET_COMICS_SELECTOR);
-  
+
   /* variables initialization */
   const { variant, value, onChange, onDispatch } = props;
   const [search, setSearch] = useState<string>();

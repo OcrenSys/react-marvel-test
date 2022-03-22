@@ -5,12 +5,8 @@ import routesConfig from "../config/routesConfig";
 import { RETRIEVE_CHARACTERS } from "../store/actions/characters.action";
 
 const Layout = (props) => {
-  const dispatch = useDispatch();
   const urls = routesConfig();
-
-  useEffect(() => {
-    dispatch(RETRIEVE_CHARACTERS())
-  }, [dispatch])
+  
 
   return (
     <div>
