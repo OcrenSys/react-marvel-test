@@ -9,7 +9,7 @@ const useStyles = makeStyles({
     alignContent: "center",
     position: "absolute",
     left: "50%",
-    top: "50%",
+    bottom: "3vh",
     transform: "translate(-50%, -50%)",
   },
 });

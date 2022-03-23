@@ -7,7 +7,7 @@ export const Image = ({ title, largeImage, smallImage }) => {
           </div>
           <img
             src={smallImage}
-            className='img-responsive'
+            className='img-responsive object-fit'
             alt={title}
           />
       </div>

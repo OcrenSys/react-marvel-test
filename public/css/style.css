@@ -362,8 +362,14 @@ header .intro-text {
   overflow: hidden;
   position: relative;
   margin: 0;
-  max-height: 250px;
+  max-height: 200px;
 }
+
+.object-fit {
+  object-fit: cover !important;
+  object-position: top center !important;
+}
+
 .hover-bg .hover-text {
   position: absolute;
   text-align: center;
@@ -614,8 +620,34 @@ label {
   flex-direction: column;
 }
 
+.p4 {
+  padding-left: 32px;
+  padding-right: 32px;
+}
+
 @media (max-width: 768px) {
   #about img {
     margin: 50px 0;
   }
+}
+
+/* width */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background:  rgb(214, 214, 214);
+  border-radius: 32px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: rgb(196, 196, 196);
 }

@@ -3,110 +3,169 @@ import {
   AutocompleteChangeReason,
   Typography,
 } from "@mui/material";
-import { useEffect, useMemo, useState } from "react";
-import { useSelector } from "react-redux";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { GET_CHARACTERS_SELECTOR } from "../store/selectors/characters.selector";
 import TCharacter from "../types/character";
-import { Image } from "./image";
 import useDebounce from "../hooks/useDebounce";
 import SearchComponent from "./Search";
-import Spinner from "./Spinners";
-import AutoCompleteFilter from "./Select/AutoCompleteFilter";
 import { hasComic, hasSearch } from "../utils/helpers";
 import { RETRIEVE_COMICS } from "../store/actions/comic.actions";
 import { AnyAction } from "@reduxjs/toolkit";
+import AutoCompleteFilter from "./Autocomplete/AutoCompleteFilter";
+import { TOption } from "../types/TOption";
+import { constants } from "../utils/constant";
+import { RETRIEVE_CHARACTERS } from "../store/actions/characters.action";
+import InfiniteScrollWrapper from "./InfiniteScrollWrapper";
+import CardComponent from "./Card";
+import { TParameters } from "../types/parameters";
+
+let loadNextTimeout: NodeJS.Timeout;
+const scrollTarget: string = "scrollableCharacterDiv";
 
 export const Characters = (): React.ReactElement => {
-  const { loading, results } = useSelector(GET_CHARACTERS_SELECTOR);
+  const dispatch = useDispatch();
+  const { loading, results, total } = useSelector(GET_CHARACTERS_SELECTOR);
 
-  const [search, setSearch] = useState<string>();
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [comicSelected, setComicSelected] = useState<{
-    label: string;
-    id: string;
-  }>({ label: "", id: "" });
-  const debounced: string = useDebounce(search, 600);
+  const [search, setSearch] = useState<string>("");
+  const [offset, setOffset] = useState<number>(0);
+  const [hasMore, setHasMore] = useState<boolean>(true);
+  const [characters, setCharacters] = useState<TCharacter[]>(results);
+  const [comicSelected, setComicSelected] = useState<TOption>({
+    label: "",
+    id: "",
+  });
+  const searchDebounced: string = useDebounce(search, 600);
 
-  let characters: TCharacter[] = useMemo(() => {
-    setIsLoading(false);
+  /* let data: TCharacter[] = useMemo(() => {
+    let result: TCharacter[] = characters;
 
-    let result: TCharacter[] = results;
-
-    console.log(debounced)
-    if (debounced)
-      result = results.filter((character: TCharacter) =>
-        hasSearch(character.name, debounced)
+    if (searchDebounced)
+      result = characters.filter((character: TCharacter) =>
+        hasSearch(character.name, searchDebounced)
       );
 
     if (comicSelected?.id)
-      result = results.filter((character: TCharacter) =>
+      result = characters.filter((character: TCharacter) =>
         hasComic(character?.comics?.items, comicSelected?.id)
       );
 
     return result;
-  }, [results, debounced, comicSelected]);
+  }, [characters, searchDebounced, comicSelected]); */
 
   const handleChangeSearch = ({
     target,
   }: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = target;
-    setIsLoading(true);
+    setCharacters([]);
+    setHasMore(false);
+    setOffset(0);
     setSearch(value);
   };
 
-  const handleChangeAutoComplete = (
-    event: React.SyntheticEvent,
-    value: { label: string; id: string },
-    reason: AutocompleteChangeReason,
-    details?: AutocompleteChangeDetails<any>
-  ) => {
-    setIsLoading(true);
-    setComicSelected(value);
+  const handleChangeAutoComplete = useCallback(
+    (
+      event: React.SyntheticEvent,
+      value: { label: string; id: string },
+      reason: AutocompleteChangeReason,
+      details?: AutocompleteChangeDetails<any>
+    ) => {
+      setCharacters([]);
+      setHasMore(false);
+      setOffset(0);
+      setComicSelected(value);
+    },
+    [setComicSelected]
+  );
+
+  const handleDistpachComics = useCallback(
+    (titleStartsWith: string): AnyAction => {
+      return RETRIEVE_COMICS({ titleStartsWith: titleStartsWith || "" });
+    },
+    []
+  );
+
+  const handleNext = () => {
+    setHasMore(false);
+    clearTimeout(loadNextTimeout);
+
+    loadNextTimeout = setTimeout(() => {
+      setOffset((prev) => prev + constants.offset);
+    }, 500);
   };
 
   useEffect(() => {
-    setIsLoading(loading);
-  }, [loading]);
+    setCharacters((prev) => [...prev, ...results]);
+    if (!searchDebounced && !comicSelected)
+      setHasMore(characters.length < total);
 
-  const handleDistpach = (titleStartsWith: string): AnyAction => {
-    return RETRIEVE_COMICS({
-      titleStartsWith: titleStartsWith || "",
-    })
-  }
+    return () => {};
+  }, [results, total]);
+
+  useEffect(() => {
+    let parameters: TParameters = {
+      offset: offset,
+    };
+    if (searchDebounced !== "")
+      parameters = {
+        ...parameters,
+        nameStartsWith: searchDebounced,
+      };
+    if (comicSelected?.id)
+      parameters = {
+        ...parameters,
+        comics: parseInt(comicSelected?.id),
+      };
+
+    dispatch(RETRIEVE_CHARACTERS(parameters));
+  }, [dispatch, offset, searchDebounced, comicSelected]);
+
+  const RenderContainer = (): React.ReactElement | React.ReactElement[] => (
+    <div className="">
+      <div className="portfolio-items">{RenderCharacters()}</div>
+    </div>
+  );
 
   const RenderCharacters = (): React.ReactElement | React.ReactElement[] =>
     characters.length ? (
       characters?.map((c: TCharacter, i: number) => (
-        <div key={i} className="col-sm-6 col-md-4 col-lg-4">
-          <Image
+        <div
+          key={i}
+          style={{ paddingRight: 4, paddingLeft: 4 }}
+          className="col-sm-4 col-md-3 col-lg-3"
+        >
+          <CardComponent
             title={c.name}
-            largeImage={`${c.thumbnail.path}.${c.thumbnail.extension}`}
-            smallImage={`${c.thumbnail.path}.${c.thumbnail.extension}`}
+            src={`${c.thumbnail.path}.${c.thumbnail.extension}`}
+            description={`${c.description}`}
           />
         </div>
       ))
-    ) : (
+    ) : !loading && !characters.length ? (
       <Typography variant="h5" gutterBottom component="div">
         No se encontraron registros
       </Typography>
+    ) : (
+      <></>
     );
 
   return (
-    <div id="portfolio" className="text-center">
+    <div className="text-center">
       <div className="container">
         <div className="section-title">
-          <h2>Characters</h2>
+          <h2>Charactersc</h2>
           <p>
             Lorem ipsum dolor sit amet, consectetur adipiscing elit duis sed
             dapibus leonec.
+            {characters.length}
           </p>
           <div className="content-center-row">
             <AutoCompleteFilter
               variant={"outlined"}
-              onDispatch={handleDistpach}
+              value={comicSelected}
+              onDispatch={handleDistpachComics}
               onChange={handleChangeAutoComplete}
             />
-            <hr />
             <SearchComponent
               label="Search characters"
               variant={"outlined"}
@@ -116,10 +175,15 @@ export const Characters = (): React.ReactElement => {
           </div>
         </div>
 
-        <div className="row">
-          <div className="portfolio-items">
-            {!isLoading ? RenderCharacters() : <Spinner />}
-          </div>
+        <div id={scrollTarget}>
+          <InfiniteScrollWrapper
+            hasMore={hasMore}
+            handleNext={handleNext}
+            length={characters.length}
+            scrollableTarget={scrollTarget}
+          >
+            {RenderContainer()}
+          </InfiniteScrollWrapper>
         </div>
       </div>
     </div>
