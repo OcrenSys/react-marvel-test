@@ -15,16 +15,17 @@ import { hasComic, hasSearch } from "../utils/helpers";
 import { RETRIEVE_COMICS } from "../store/actions/comic.actions";
 import { AnyAction } from "@reduxjs/toolkit";
 import AutoCompleteFilter from "./Autocomplete/AutoCompleteFilter";
-import InfiniteScroll from "react-infinite-scroll-component";
 import { TOption } from "../types/TOption";
 import { constants } from "../utils/constant";
 import { RETRIEVE_CHARACTERS } from "../store/actions/characters.action";
+import InfiniteScrollWrapper from "./InfiniteScrollWrapper";
+import CardComponent from "./Card";
 
 let loadNextTimeout: NodeJS.Timeout;
+const scrollTarget: string = "scrollableCharacterDiv";
 
 export const Characters = (): React.ReactElement => {
   const dispatch = useDispatch();
-
   const { loading, results, count, limit, total } = useSelector(
     GET_CHARACTERS_SELECTOR
   );
@@ -32,19 +33,19 @@ export const Characters = (): React.ReactElement => {
   const [search, setSearch] = useState<string>();
   const [offset, setOffset] = useState<number>(0);
   const [hasMore, setHasMore] = useState<boolean>(true);
-  const [characters, setCharacters] = useState<TCharacter[]>([]);
+  const [characters, setCharacters] = useState<TCharacter[]>(results);
+  const searchDebounced: string = useDebounce(search, 600);
   const [comicSelected, setComicSelected] = useState<TOption>({
     label: "",
     id: "",
   });
-  const debounced: string = useDebounce(search, 600);
 
   let data: TCharacter[] = useMemo(() => {
     let result: TCharacter[] = characters;
 
-    if (debounced)
+    if (searchDebounced)
       result = characters.filter((character: TCharacter) =>
-        hasSearch(character.name, debounced)
+        hasSearch(character.name, searchDebounced)
       );
 
     if (comicSelected?.id)
@@ -53,7 +54,7 @@ export const Characters = (): React.ReactElement => {
       );
 
     return result;
-  }, [characters, debounced, comicSelected]);
+  }, [characters, searchDebounced, comicSelected]);
 
   const handleChangeSearch = ({
     target,
@@ -74,7 +75,7 @@ export const Characters = (): React.ReactElement => {
     [setComicSelected]
   );
 
-  const handleDistpach = useCallback((titleStartsWith: string): AnyAction => {
+  const handleDistpachComics = useCallback((titleStartsWith: string): AnyAction => {
     return RETRIEVE_COMICS({ titleStartsWith: titleStartsWith || "" });
   }, []);
 
@@ -85,15 +86,17 @@ export const Characters = (): React.ReactElement => {
 
     loadNextTimeout = setTimeout(() => {
       setOffset((prev) => prev + constants.offset);
-    }, 3000);
+    }, 300);
   };
 
   useEffect(() => {
     console.log("setCharacters...");
 
-    setHasMore(true);
     setCharacters((prev) => [...prev, ...results]);
-  }, [results, offset]);
+    setHasMore(true);
+
+    return () => {}
+  }, [results, offset]) ;
 
   useEffect(() => {
     dispatch(RETRIEVE_CHARACTERS({ offset: offset || 0 }));
@@ -109,10 +112,10 @@ export const Characters = (): React.ReactElement => {
     data.length ? (
       data?.map((c: TCharacter, i: number) => (
         <div key={i} className="col-sm-4 col-md-3 col-lg-3">
-          <Image
+           <CardComponent
             title={c.name}
-            largeImage={`${c.thumbnail.path}.${c.thumbnail.extension}`}
-            smallImage={`${c.thumbnail.path}.${c.thumbnail.extension}`}
+            src={`${c.thumbnail.path}.${c.thumbnail.extension}`}
+            description={`${c.description}`}
           />
         </div>
       ))
@@ -126,16 +129,17 @@ export const Characters = (): React.ReactElement => {
     <div className="text-center">
       <div className="container">
         <div className="section-title">
-          <h2>Characters</h2>
+          <h2>Charactersc</h2>
           <p>
             Lorem ipsum dolor sit amet, consectetur adipiscing elit duis sed
             dapibus leonec.
+            {characters.length}
           </p>
           <div className="content-center-row">
             <AutoCompleteFilter
               variant={"outlined"}
               value={comicSelected}
-              onDispatch={handleDistpach}
+              onDispatch={handleDistpachComics}
               onChange={handleChangeAutoComplete}
             />
             <SearchComponent
@@ -147,22 +151,15 @@ export const Characters = (): React.ReactElement => {
           </div>
         </div>
 
-        <div id="scrollableDiv">
-          <InfiniteScroll
-            dataLength={characters.length}
-            next={handleNext}
-            // style={{ display: "flex", flexDirection: "column-reverse" }} //To put endMessage and loader to the top.
+        <div className="cotainer" id={scrollTarget} style={{ height: "70vh", overflow: "auto" }}>
+          <InfiniteScrollWrapper
             hasMore={hasMore}
-            loader={
-              <Typography variant="h5" gutterBottom component="div">
-                Loading
-              </Typography>
-            }
-            height={"70vh"}
-            scrollableTarget="scrollableDiv"
+            handleNext={handleNext}
+            length={characters.length}
+            scrollableTarget={scrollTarget}
           >
             {RenderContainer()}
-          </InfiniteScroll>
+          </InfiniteScrollWrapper>
         </div>
       </div>
     </div>
