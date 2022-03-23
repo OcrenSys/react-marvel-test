@@ -7,10 +7,8 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { GET_CHARACTERS_SELECTOR } from "../store/selectors/characters.selector";
 import TCharacter from "../types/character";
-import { Image } from "./image";
 import useDebounce from "../hooks/useDebounce";
 import SearchComponent from "./Search";
-import Spinner from "./Spinners";
 import { hasComic, hasSearch } from "../utils/helpers";
 import { RETRIEVE_COMICS } from "../store/actions/comic.actions";
 import { AnyAction } from "@reduxjs/toolkit";
@@ -20,27 +18,26 @@ import { constants } from "../utils/constant";
 import { RETRIEVE_CHARACTERS } from "../store/actions/characters.action";
 import InfiniteScrollWrapper from "./InfiniteScrollWrapper";
 import CardComponent from "./Card";
+import { TParameters } from "../types/parameters";
 
 let loadNextTimeout: NodeJS.Timeout;
 const scrollTarget: string = "scrollableCharacterDiv";
 
 export const Characters = (): React.ReactElement => {
   const dispatch = useDispatch();
-  const { loading, results, count, limit, total } = useSelector(
-    GET_CHARACTERS_SELECTOR
-  );
+  const { loading, results, total } = useSelector(GET_CHARACTERS_SELECTOR);
 
-  const [search, setSearch] = useState<string>();
+  const [search, setSearch] = useState<string>("");
   const [offset, setOffset] = useState<number>(0);
   const [hasMore, setHasMore] = useState<boolean>(true);
   const [characters, setCharacters] = useState<TCharacter[]>(results);
-  const searchDebounced: string = useDebounce(search, 600);
   const [comicSelected, setComicSelected] = useState<TOption>({
     label: "",
     id: "",
   });
+  const searchDebounced: string = useDebounce(search, 600);
 
-  let data: TCharacter[] = useMemo(() => {
+  /* let data: TCharacter[] = useMemo(() => {
     let result: TCharacter[] = characters;
 
     if (searchDebounced)
@@ -54,12 +51,15 @@ export const Characters = (): React.ReactElement => {
       );
 
     return result;
-  }, [characters, searchDebounced, comicSelected]);
+  }, [characters, searchDebounced, comicSelected]); */
 
   const handleChangeSearch = ({
     target,
   }: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = target;
+    setCharacters([]);
+    setHasMore(false);
+    setOffset(0);
     setSearch(value);
   };
 
@@ -70,59 +70,83 @@ export const Characters = (): React.ReactElement => {
       reason: AutocompleteChangeReason,
       details?: AutocompleteChangeDetails<any>
     ) => {
+      setCharacters([]);
+      setHasMore(false);
+      setOffset(0);
       setComicSelected(value);
     },
     [setComicSelected]
   );
 
-  const handleDistpachComics = useCallback((titleStartsWith: string): AnyAction => {
-    return RETRIEVE_COMICS({ titleStartsWith: titleStartsWith || "" });
-  }, []);
+  const handleDistpachComics = useCallback(
+    (titleStartsWith: string): AnyAction => {
+      return RETRIEVE_COMICS({ titleStartsWith: titleStartsWith || "" });
+    },
+    []
+  );
 
   const handleNext = () => {
-    console.log("handleNext...");
     setHasMore(false);
     clearTimeout(loadNextTimeout);
 
     loadNextTimeout = setTimeout(() => {
       setOffset((prev) => prev + constants.offset);
-    }, 300);
+    }, 500);
   };
 
   useEffect(() => {
-    console.log("setCharacters...");
-
     setCharacters((prev) => [...prev, ...results]);
-    setHasMore(true);
+    if (!searchDebounced && !comicSelected)
+      setHasMore(characters.length < total);
 
-    return () => {}
-  }, [results, offset]) ;
+    return () => {};
+  }, [results, total]);
 
   useEffect(() => {
-    dispatch(RETRIEVE_CHARACTERS({ offset: offset || 0 }));
-  }, [dispatch, offset]);
+    let parameters: TParameters = {
+      offset: offset,
+    };
+    if (searchDebounced !== "")
+      parameters = {
+        ...parameters,
+        nameStartsWith: searchDebounced,
+      };
+    if (comicSelected?.id)
+      parameters = {
+        ...parameters,
+        comics: parseInt(comicSelected?.id),
+      };
+
+    dispatch(RETRIEVE_CHARACTERS(parameters));
+  }, [dispatch, offset, searchDebounced, comicSelected]);
 
   const RenderContainer = (): React.ReactElement | React.ReactElement[] => (
-    <div className="content-center-row">
+    <div className="">
       <div className="portfolio-items">{RenderCharacters()}</div>
     </div>
   );
 
   const RenderCharacters = (): React.ReactElement | React.ReactElement[] =>
-    data.length ? (
-      data?.map((c: TCharacter, i: number) => (
-        <div key={i} className="col-sm-4 col-md-3 col-lg-3">
-           <CardComponent
+    characters.length ? (
+      characters?.map((c: TCharacter, i: number) => (
+        <div
+          key={i}
+          style={{ paddingRight: 4, paddingLeft: 4 }}
+          className="col-sm-4 col-md-3 col-lg-3"
+        >
+          <CardComponent
             title={c.name}
             src={`${c.thumbnail.path}.${c.thumbnail.extension}`}
             description={`${c.description}`}
           />
         </div>
       ))
-    ) : (
+    ) : !loading && !characters.length ? (
       <Typography variant="h5" gutterBottom component="div">
         No se encontraron registros
       </Typography>
+    ) : (
+      <></>
     );
 
   return (
@@ -151,7 +175,7 @@ export const Characters = (): React.ReactElement => {
           </div>
         </div>
 
-        <div className="cotainer" id={scrollTarget} style={{ height: "70vh", overflow: "auto" }}>
+        <div id={scrollTarget}>
           <InfiniteScrollWrapper
             hasMore={hasMore}
             handleNext={handleNext}

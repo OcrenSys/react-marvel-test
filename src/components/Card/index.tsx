@@ -25,7 +25,7 @@ export default function CardComponent({
             {title}
           </Typography>
           {description && (
-            <Typography variant="body2" color="text.secondary">
+            <Typography variant="body1" color="text.secondary">
               {description}
             </Typography>
           )}

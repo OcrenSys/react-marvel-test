@@ -1,6 +1,5 @@
-import { Typography } from "@mui/material";
+import { Box, CircularProgress, Typography } from "@mui/material";
 import InfiniteScroll from "react-infinite-scroll-component";
-import Spinner from "../Spinners";
 
 type TinfiniteScrollWrapperProps = {
   hasMore: boolean;
@@ -19,14 +18,14 @@ const InfiniteScrollWrapper = ({
 }: TinfiniteScrollWrapperProps) => {
   return (
     <InfiniteScroll
-      //height={"70vh"}
+      height={"70vh"}
       hasMore={hasMore}
       next={handleNext}
       dataLength={length}
       loader={
-        <Typography variant="h5" gutterBottom component="div">
-          loading...
-        </Typography>
+        <Box sx={{ width: "100%", marginTop: 8, marginBottom: 16 }}>
+          <CircularProgress />
+        </Box>
       }
       scrollableTarget={scrollableTarget}
     >
