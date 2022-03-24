@@ -23,7 +23,7 @@ const InfiniteScrollWrapper = ({
       next={handleNext}
       dataLength={length}
       loader={
-        <Box sx={{ width: "100%", marginTop: 8, marginBottom: 16 }}>
+        <Box sx={{ width: "100%", marginTop: 16, marginBottom: 16 }}>
           <CircularProgress />
         </Box>
       }

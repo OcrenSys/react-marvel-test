@@ -351,8 +351,11 @@ header .intro-text {
   margin-bottom: 40px;
 }
 /* Portfolio Section */
+.top-100 {
+  padding: 100px 0 !important;
+}
 #portfolio {
-  padding: 100px 0;
+  padding-top: 100px 0;
 }
 .portfolio-item {
   margin: 1px -15px 0 -14px;

@@ -3,13 +3,12 @@ import {
   AutocompleteChangeReason,
   Typography,
 } from "@mui/material";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { GET_CHARACTERS_SELECTOR } from "../store/selectors/characters.selector";
 import TCharacter from "../types/character";
 import useDebounce from "../hooks/useDebounce";
 import SearchComponent from "./Search";
-import { hasComic, hasSearch } from "../utils/helpers";
 import { RETRIEVE_COMICS } from "../store/actions/comic.actions";
 import { AnyAction } from "@reduxjs/toolkit";
 import AutoCompleteFilter from "./Autocomplete/AutoCompleteFilter";
@@ -37,22 +36,6 @@ export const Characters = (): React.ReactElement => {
   });
   const searchDebounced: string = useDebounce(search, 600);
 
-  /* let data: TCharacter[] = useMemo(() => {
-    let result: TCharacter[] = characters;
-
-    if (searchDebounced)
-      result = characters.filter((character: TCharacter) =>
-        hasSearch(character.name, searchDebounced)
-      );
-
-    if (comicSelected?.id)
-      result = characters.filter((character: TCharacter) =>
-        hasComic(character?.comics?.items, comicSelected?.id)
-      );
-
-    return result;
-  }, [characters, searchDebounced, comicSelected]); */
-
   const handleChangeSearch = ({
     target,
   }: React.ChangeEvent<HTMLInputElement>) => {
@@ -66,9 +49,7 @@ export const Characters = (): React.ReactElement => {
   const handleChangeAutoComplete = useCallback(
     (
       event: React.SyntheticEvent,
-      value: { label: string; id: string },
-      reason: AutocompleteChangeReason,
-      details?: AutocompleteChangeDetails<any>
+      value: { label: string; id: string }
     ) => {
       setCharacters([]);
       setHasMore(false);
@@ -96,8 +77,7 @@ export const Characters = (): React.ReactElement => {
 
   useEffect(() => {
     setCharacters((prev) => [...prev, ...results]);
-    if (!searchDebounced && !comicSelected)
-      setHasMore(characters.length < total);
+      setHasMore(total>20 ? characters.length < total : false);
 
     return () => {};
   }, [results, total]);
@@ -150,15 +130,11 @@ export const Characters = (): React.ReactElement => {
     );
 
   return (
-    <div className="text-center">
+    <div className="top-100  text-center">
       <div className="container">
         <div className="section-title">
           <h2>Charactersc</h2>
-          <p>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit duis sed
-            dapibus leonec.
-            {characters.length}
-          </p>
+          
           <div className="content-center-row">
             <AutoCompleteFilter
               variant={"outlined"}
