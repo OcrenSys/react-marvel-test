@@ -13,6 +13,7 @@ const store = configureStore({
   export type TAppState = {
     menuSelected: TMenuSelected,
     characters: TData<TCharacter>,
+    characterDetails: TData<TCharacter>,
     comics: TData<TComic>,
 };
 

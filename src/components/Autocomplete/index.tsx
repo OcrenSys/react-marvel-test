@@ -8,7 +8,7 @@ import {
   FormControl,
   TextField,
 } from "@mui/material";
-import { TOption } from "../../types/TOption";
+import TOption from "../../types/TOption";
 
 type TAutoCompleteProps = {
   label: string;

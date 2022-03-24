@@ -10,7 +10,7 @@ import AutoComplete from ".";
 import useDebounce from "../../hooks/useDebounce";
 import { GET_COMICS_SELECTOR } from "../../store/selectors/comics.selector";
 import { TParameters } from "../../types/parameters";
-import { TOption } from "../../types/TOption";
+import TOption from "../../types/TOption";
 
 type TAutoCompleteFilterProps = {
   selector?: "CHARACTER" | "COMIC" | "STORIES";
