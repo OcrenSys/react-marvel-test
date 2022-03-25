@@ -14,6 +14,7 @@ const store = configureStore({
     menuSelected: TMenuSelected,
     characters: TData<TCharacter>,
     characterDetails: TData<TCharacter>,
+    characterComics: TData<TComic>,
     comics: TData<TComic>,
 };
 

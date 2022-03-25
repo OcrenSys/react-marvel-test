@@ -25,7 +25,7 @@ type TComic = {
   dates: TDate[];
   prices: TPrice[];
   thumbnail: TThumbnail;
-  images: [];
+  images: any[];
   creators: TGeneric;
   characters: TGeneric;
   stories: TGeneric;
@@ -33,3 +33,6 @@ type TComic = {
 };
 
 export default TComic;
+
+export type TComicExtended = TComic & { col: number; row: number };
+

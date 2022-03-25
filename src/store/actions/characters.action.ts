@@ -28,3 +28,12 @@ export const RETRIEVE_CHARACTER_DETAILS: any = createAsyncThunk(
     return response.data?.data;
   }
 );
+
+
+export const RETRIEVE_CHARACTER_COMICS: any = createAsyncThunk(
+  "CHARACTERS/RETRIEVE_CHARACTER_COMICS",
+  async (id: number) => {
+    const response = await axiosConfig.get(routesApi.characters.comics(id));
+    return response.data?.data;
+  }
+);
