@@ -7,9 +7,9 @@ const axiosConfig = axios.create({
     Accept: "application/json, text/plain, */*"
   },
   params: {
-    ts: environment.TIMESTAMP,
     apikey: environment.REACT_API_PUBLIC_KEY,
-    hash: environment.HASH
+    hash: environment.HASH,
+    ts: environment.TIMESTAMP,
   },
   baseURL: environment.BASE_URL,
 }); 

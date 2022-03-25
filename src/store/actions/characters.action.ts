@@ -6,16 +6,34 @@ import { TParameters } from "../../types/parameters";
 export const RETRIEVE_CHARACTERS: any = createAsyncThunk(
   "CHARACTERS/RETRIEVE_CHARACTERS",
   async ({ offset, comics, nameStartsWith }: TParameters) => {
-    const response = await axiosConfig.get(
-      routesApi.characters.root, 
-      {
-        params: {
-          offset,
-          comics,
-          nameStartsWith
-        },
+    const response = await axiosConfig.get(routesApi.characters.root, {
+      params: {
+        offset,
+        comics,
+        nameStartsWith,
       },
-    );
+    });
+    return response.data?.data;
+  }
+);
+
+export const RETRIEVE_CHARACTER_DETAILS: any = createAsyncThunk(
+  "CHARACTERS/RETRIEVE_CHARACTER_DETAILS",
+  async (id: number) => {
+    const response = await axiosConfig.get(routesApi.characters.details(id), {
+      params: {
+        id,
+      },
+    });
+    return response.data?.data;
+  }
+);
+
+
+export const RETRIEVE_CHARACTER_COMICS: any = createAsyncThunk(
+  "CHARACTERS/RETRIEVE_CHARACTER_COMICS",
+  async (id: number) => {
+    const response = await axiosConfig.get(routesApi.characters.comics(id));
     return response.data?.data;
   }
 );

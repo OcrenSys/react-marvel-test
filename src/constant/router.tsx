@@ -1,45 +1,45 @@
 import React from "react";
 import { RouteObject, useRoutes } from "react-router-dom";
-import { Characters } from "../components/characters";
 import { Comics } from "../components/comics";
 import { Stories } from "../components/stories";
 import Layout from "../components/layout";
+import { Characters } from "../pages/characters";
+import { CharacterDetails } from "../pages/characters/details";
 
 const Router = (): React.ReactElement | null => {
-    let routes: RouteObject [] = [
+  let routes: RouteObject[] = [
+    {
+      path: "/",
+      element: <Layout />,
+      children: [
         {
-            path: "/",
-            element: <Layout /> ,
-            children: [
-                {
-                    index: true,
-                    element: <Characters />
-                },
-                {
-                    path: "/characters",
-                    element: <Characters />,
-                   /*  children: [
-                        {
-                            index: true,
-                            element: <About />
-                        }, {
-                            path: "/characters/:id",
-                            element: <About />
-                        },
-                    ] */
-                },
-                {
-                    path: "/comics",
-                    element: <Comics />,
-                },
-                {
-                    path: "/stories",
-                    element: <Stories />,
-                },
-            ],
+          index: true,
+          element: <Characters />,
         },
-    ];
-    return useRoutes(routes);
-}
+        {
+          path: "/characters",
+          element: <Characters />,
+        },
+        {
+          path: "/characters/details/:id",
+          element: <CharacterDetails />,
+        },
+        {
+          path: "/comics",
+          element: <Comics />,
+        },
+        {
+          path: "/stories",
+          element: <Stories />,
+        },
+        {
+          path: "/*",
+          element: <Characters />,
+        },
+      ],
+    },
+  ];
+  return useRoutes(routes);
+};
 
-export default  Router;
+export default Router;

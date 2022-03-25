@@ -1,11 +1,12 @@
 const routesApi =  {
     characters: {
         root : '/characters',
-        details: (id: number | string ): string =>  `/characters/${id}`
+        details: (id: number | string ): string =>  `/characters/${id}`,
+        comics: (id: number | string ): string =>  `/characters/${id}/comics`,
     },
     comics: {
         root : '/comics',
-        details: (id: number | string ): string =>  `/comics/${id}`
+        details: (id: number | string ): string =>  `/comics/${id}`,
     },
     stories: {
         root : '/stories',
