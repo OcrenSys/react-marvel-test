@@ -13,22 +13,37 @@ type TCardProps = {
   onRedirect?: () => void;
 };
 
-const CardComponent = ({
-  title,
-  description,
-  src,
-  onRedirect,
-}: TCardProps) => {
+const CardComponent = ({ title, description, src, onRedirect }: TCardProps) => {
   return (
     <Card style={{ marginBottom: 8 }} sx={{ maxWidth: 345, height: 260 }}>
       <CardMedia component="img" height="140" image={src} alt={title} />
       <CardContent>
-        <Typography gutterBottom variant="h5" component="div">
+        <Typography
+          style={{
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+          }}
+          gutterBottom
+          variant="h5"
+          component="div"
+        >
           {title}
         </Typography>
-        <Typography noWrap variant="body1" color="text.secondary">
-          {description || ""}
-        </Typography>
+        {description !== null && (
+          <Typography
+            style={{
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+            }}
+            noWrap
+            variant="body1"
+            color="text.secondary"
+          >
+            {description || ""}
+          </Typography>
+        )}
       </CardContent>
 
       <CardActions

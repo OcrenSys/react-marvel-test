@@ -5,12 +5,10 @@ import { TParameters } from "../../types/parameters";
 
 export const RETRIEVE_CHARACTERS: any = createAsyncThunk(
   "CHARACTERS/RETRIEVE_CHARACTERS",
-  async ({ offset, comics, nameStartsWith }: TParameters) => {
+  async (parameters: TParameters) => {
     const response = await axiosConfig.get(routesApi.characters.root, {
       params: {
-        offset,
-        comics,
-        nameStartsWith,
+        ...parameters
       },
     });
     return response.data?.data;
