@@ -54,3 +54,5 @@ export const getData = (comics: TComic[]): TComicExtended[] => {
 
   return realData;
 };
+
+export const getSrc = (path: string, extension: string): string => `${path ||  "http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available"}.${extension || "jpg"}`

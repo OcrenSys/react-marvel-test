@@ -2,7 +2,7 @@ import { createReducer } from "@reduxjs/toolkit";
 import { RETRIEVE_CHARACTERS, RETRIEVE_CHARACTER_COMICS, RETRIEVE_CHARACTER_DETAILS } from "../actions/characters.action";
 import DataInitialState from "../states/data.state";
 
-export const charactersReducer = createReducer(DataInitialState, (builder) => {
+const charactersReducer = createReducer(DataInitialState, (builder) => {
   builder.addCase(RETRIEVE_CHARACTERS.pending, (state) => ({
     ...state,
     loading: true,
@@ -70,3 +70,5 @@ export const characterComicsReducer = createReducer(
     }));
   }
 );
+
+export default charactersReducer;

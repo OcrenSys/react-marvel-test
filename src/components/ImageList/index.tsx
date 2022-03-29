@@ -5,12 +5,12 @@ import TComic, { TComicExtended } from "../../types/comic";
 import { useDispatch, useSelector } from "react-redux";
 import { GET_CHARACTERS_COMICS_SELECTOR } from "../../store/selectors/characters.selector";
 import { RETRIEVE_CHARACTER_COMICS } from "../../store/actions/characters.action";
-import { getData, getNumberBetween } from "../../utils/helpers";
+import { getData, getSrc } from "../../utils/helpers";
 import Paper from "@mui/material/Paper";
 import { Typography } from "@mui/material";
 import Spinner from "../Spinners";
 // import { makeStyles } from "@mui/styles";
-import { ThemeProvider, createTheme } from "@mui/material/styles";
+import { ThemeProvider } from "@mui/material/styles";
 import { paperTheme } from "../../utils/themes";
 
 type QuitedImageListprops = {
@@ -41,8 +41,6 @@ const QuiltedImageList = (props: QuitedImageListprops) => {
   }, [dispatch, characterId]);
 
   useEffect(() => {
-    console.log(results)
-    console.log(getData(results))
     setComics(getData(results));
   }, [results]);
 
@@ -69,10 +67,7 @@ const QuiltedImageList = (props: QuitedImageListprops) => {
                     <ImageListItem key={id} cols={col} rows={row}>
                       <img
                         {...srcset(
-                          `${
-                            images[0]?.path ||
-                            "http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available"
-                          }.${images[0]?.extension || "jpg"}`,
+                          getSrc(images[0]?.path, images[0]?.extension),
                           comics.length,
                           row,
                           col
@@ -89,8 +84,14 @@ const QuiltedImageList = (props: QuitedImageListprops) => {
         </ThemeProvider>
       </>
     ) : (
-      <Typography className="text-center" variant="h5" gutterBottom color="text.secondary" component="div">
-       No hay comics relacionados...
+      <Typography
+        className="text-center"
+        variant="h5"
+        gutterBottom
+        color="text.secondary"
+        component="div"
+      >
+        No hay comics relacionados...
       </Typography>
     );
   };
