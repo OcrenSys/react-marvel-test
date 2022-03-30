@@ -98,7 +98,7 @@ export const Comics = (): React.ReactElement => {
       replace: false,
       state: {},
     };
-    // return navigate(`/comics/details/${characterId}`, options);
+    return navigate(`/comics/details/${characterId}`, options);
   };
 
   const handleFormatSelect = (event: SelectChangeEvent<string>) => {

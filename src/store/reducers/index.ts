@@ -1,6 +1,6 @@
 import { combineReducers } from "redux";
 import charactersReducer, { characterComicsReducer, characterDetailsReducer } from "./characters.reducers";
-import comicsReducer, { comicDetailsReducer } from "./comics.reducer";
+import comicsReducer, { comicCharactersReducer, comicDetailsReducer } from "./comics.reducer";
 import storiesReducer, { storyDetailsReducer } from "./stories.reducer";
 
 export default combineReducers({
@@ -11,6 +11,7 @@ export default combineReducers({
   /* COMIC SECTION */
   comics: comicsReducer,
   comicDetails: comicDetailsReducer,
+  comicCharacters: comicCharactersReducer,
   /* STORIES SECTION */
   stories: storiesReducer,
   storyDetails: storyDetailsReducer,

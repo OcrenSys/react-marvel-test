@@ -4,6 +4,7 @@ import Layout from "../components/layout";
 import { Characters } from "../pages/characters";
 import { CharacterDetails } from "../pages/characters/details";
 import { Comics } from "../pages/comics";
+import { ComicDetails } from "../pages/comics/details";
 import { Stories } from "../pages/stories";
 
 const Router = (): React.ReactElement | null => {
@@ -27,6 +28,10 @@ const Router = (): React.ReactElement | null => {
         {
           path: "/comics",
           element: <Comics />,
+        },
+        {
+          path: "/comics/details/:id",
+          element: <ComicDetails />,
         },
         {
           path: "/stories",

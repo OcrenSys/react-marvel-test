@@ -1,20 +1,20 @@
-import React, { useEffect, useState } from "react";
-import ImageList from "@mui/material/ImageList";
-import ImageListItem from "@mui/material/ImageListItem";
-import TComic, { TComicExtended } from "../../types/comic";
+import { useEffect, useState } from "react";
+import { TComicExtended } from "../../types/comic";
 import { useDispatch, useSelector } from "react-redux";
-import { GET_CHARACTERS_COMICS_SELECTOR } from "../../store/selectors/characters.selector";
-import { RETRIEVE_CHARACTER_COMICS } from "../../store/actions/characters.action";
-import { getData, getSrc } from "../../utils/helpers";
-import Paper from "@mui/material/Paper";
+import { getData, getDispatch, getSelector, getSrc } from "../../utils/helpers";
 import { Typography } from "@mui/material";
-import Spinner from "../Spinners";
-// import { makeStyles } from "@mui/styles";
 import { ThemeProvider } from "@mui/material/styles";
 import { paperTheme } from "../../utils/themes";
+import Paper from "@mui/material/Paper";
+import ImageList from "@mui/material/ImageList";
+import ImageListItem from "@mui/material/ImageListItem";
+import Spinner from "../Spinners";
+import { TStoryExtended } from "../../types/stories";
 
 type QuitedImageListprops = {
-  characterId: number | string | undefined;
+  id: number | string | undefined;
+  type: "character" | "comic" | "story";
+  message?: string;
 };
 
 const srcset = (image: string, size: number, rows = 1, cols = 1) => {
@@ -27,25 +27,24 @@ const srcset = (image: string, size: number, rows = 1, cols = 1) => {
 };
 
 const QuiltedImageList = (props: QuitedImageListprops) => {
-  const { characterId } = props;
+  const { id, type, message } = props;
 
   const dispatch = useDispatch();
-  const { loading, results, total } = useSelector(
-    GET_CHARACTERS_COMICS_SELECTOR
-  );
 
-  const [comics, setComics] = useState<TComicExtended[]>([]);
+  const { loading, results, total } = useSelector(getSelector(type));
 
-  useEffect(() => {
-    dispatch(RETRIEVE_CHARACTER_COMICS(characterId));
-  }, [dispatch, characterId]);
+  const [data, setData] = useState<TComicExtended[] | TComicExtended[] | TStoryExtended[]>([]);
 
   useEffect(() => {
-    setComics(getData(results));
+    dispatch(getDispatch(type, id));
+  }, [dispatch, id]);
+
+  useEffect(() => {
+    setData(getData(results));
   }, [results]);
 
   const renderContainer = () => {
-    return comics?.length > 0 ? (
+    return data?.length > 0 ? (
       <>
         <Typography noWrap variant="body1" color="text.secondary">
           {`Comics by character (${total} items)`}
@@ -62,13 +61,13 @@ const QuiltedImageList = (props: QuitedImageListprops) => {
                 cols={4}
                 rowHeight={200}
               >
-                {comics.map(
-                  ({ images, id, title, col, row }: TComicExtended) => (
+                {data.map(
+                  ({ images: [first, ], id, title, col, row }: TComicExtended | TComicExtended | TStoryExtended) => (
                     <ImageListItem key={id} cols={col} rows={row}>
                       <img
                         {...srcset(
-                          getSrc(images[0]?.path, images[0]?.extension),
-                          comics.length,
+                          getSrc(first?.path, first?.extension),
+                          data.length,
                           row,
                           col
                         )}
@@ -86,17 +85,21 @@ const QuiltedImageList = (props: QuitedImageListprops) => {
     ) : (
       <Typography
         className="text-center"
-        variant="h5"
+        variant="h3"
         gutterBottom
         color="text.secondary"
         component="div"
       >
-        No hay comics relacionados...
+       {message}
       </Typography>
     );
   };
 
   return !loading ? <>{renderContainer()}</> : <Spinner />;
 };
+
+QuiltedImageList.defaultProps = {
+  message: "No results found..."
+}
 
 export default QuiltedImageList;

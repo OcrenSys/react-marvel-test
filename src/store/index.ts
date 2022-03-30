@@ -18,6 +18,7 @@ const store = configureStore({
     /* COMICS SECTION */
     comics: TData<TComic>,
     comicDetails: TData<TComic>,
+    comicCharacters: TData<TComic>,
     /* STORIES SECTION */
     stories: TData<TStory>,
     storyDetails: TData<TStory>,

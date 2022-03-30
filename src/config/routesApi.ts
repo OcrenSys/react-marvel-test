@@ -7,6 +7,7 @@ const routesApi =  {
     comics: {
         root : '/comics',
         details: (id: number | string ): string =>  `/comics/${id}`,
+        characters: (id: number | string ): string =>  `/comics/${id}/characters`,
     },
     stories: {
         root : '/stories',

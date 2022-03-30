@@ -1,32 +1,32 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
-import { RETRIEVE_CHARACTER_DETAILS } from "../../store/actions/characters.action";
-import { GET_CHARACTERS_DETAILS_SELECTOR } from "../../store/selectors/characters.selector";
-import TCharacter from "../../types/character";
 import Paper from "@mui/material/Paper";
 import { Typography } from "@mui/material";
 import QuiltedImageList from "../../components/ImageList";
 import { ThemeProvider } from "@mui/material/styles";
 import { paperTheme } from "../../utils/themes";
+import { GET_COMICS_DETAILS_SELECTOR } from "../../store/selectors/comics.selector";
+import TComic from "../../types/comic";
+import { RETRIEVE_COMIC_DETAILS } from "../../store/actions/comic.actions";
 import { getSrc } from "../../utils/helpers";
 
-export const CharacterDetails = (): React.ReactElement => {
+export const ComicDetails = (): React.ReactElement => {
   let { id } = useParams();
 
   const dispatch = useDispatch();
-  const [character, setCharacter] = useState<TCharacter>();
+  const [comic, setComic] = useState<TComic>();
   const { loading, results, total } = useSelector(
-    GET_CHARACTERS_DETAILS_SELECTOR
+    GET_COMICS_DETAILS_SELECTOR
   );
 
   useEffect(() => {
-    const [first,] = results;
-    setCharacter(first);
+    const [first, ] = results;
+    setComic(first);
   }, [results]);
 
   useEffect(() => {
-    dispatch(RETRIEVE_CHARACTER_DETAILS(id));
+    dispatch(RETRIEVE_COMIC_DETAILS(id));
   }, [dispatch, id]);
 
   return (
@@ -41,7 +41,7 @@ export const CharacterDetails = (): React.ReactElement => {
                 children={
                   <img
                     style={{ borderRadius: 8, minHeight: 600}}
-                    src={getSrc(character?.thumbnail?.path, character?.thumbnail?.extension)}
+                    src={getSrc(comic?.thumbnail?.path, comic?.thumbnail?.extension)}
                     className="img-responsive"
                     alt=""
                   />
@@ -55,14 +55,14 @@ export const CharacterDetails = (): React.ReactElement => {
               <div className=" col-xs-12">
                 <div className="section-title text-center">
                   <Typography gutterBottom variant="h2" component="div">
-                    {character?.name}
+                    {comic?.title}
                   </Typography>
                   <Typography noWrap variant="body1" color="text.secondary">
-                    {character?.description || ""}
+                    {comic?.description || ""}
                   </Typography>
                 </div>
 
-                <QuiltedImageList  id={id} type={"character"} />
+                <QuiltedImageList id={id} type={"comic"} message={"Characters not found"}/>
               </div>
             </div>
           </div>

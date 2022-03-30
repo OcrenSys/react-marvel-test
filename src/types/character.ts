@@ -1,4 +1,3 @@
-import TComic from "./comic";
 import { TGeneric, TThumbnail, TUrl } from "./Response";
 
 type TCharacter = {
@@ -14,5 +13,8 @@ type TCharacter = {
   events: TGeneric[];
   urls: TUrl[];
 };
+
+export type TCharacterExtended = TCharacter & { col: number; row: number };
+
 
 export default TCharacter;
