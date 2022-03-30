@@ -8,11 +8,10 @@ export const RETRIEVE_STORIES: any = createAsyncThunk(
   async (parameters: TParameters) => {
     const response = await axiosConfig.get(routesApi.stories.root, {
       params: {
-       ...parameters
+        ...parameters,
       },
     });
-
-    return response.data.data;
+    return response.data?.data;
   }
 );
 
@@ -24,7 +23,13 @@ export const RETRIEVE_STORY_DETAILS: any = createAsyncThunk(
         id,
       },
     });
-
-    return response.data.data;
+    return response.data?.data;
+  }
+);
+export const RETRIEVE_STORY_CHARACTERS: any = createAsyncThunk(
+  "STORIES/RETRIEVE_STORY_CHARACTERS",
+  async (id: number) => {
+    const response = await axiosConfig.get(routesApi.stories.characters(id));
+    return response.data?.data;
   }
 );

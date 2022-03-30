@@ -26,3 +26,11 @@ export const RETRIEVE_COMIC_DETAILS: any = createAsyncThunk(
     return response.data?.data;
   }
 );
+
+export const RETRIEVE_COMIC_CHARACTERS: any = createAsyncThunk(
+  "COMICS/RETRIEVE_COMICS",
+  async (id: number) => {
+    const response = await axiosConfig.get(routesApi.comics.characters(id));
+    return response.data?.data;
+  }
+);

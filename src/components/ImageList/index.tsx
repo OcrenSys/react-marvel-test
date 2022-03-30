@@ -1,20 +1,26 @@
-import React, { useEffect, useState } from "react";
-import ImageList from "@mui/material/ImageList";
-import ImageListItem from "@mui/material/ImageListItem";
-import TComic, { TComicExtended } from "../../types/comic";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { GET_CHARACTERS_COMICS_SELECTOR } from "../../store/selectors/characters.selector";
-import { RETRIEVE_CHARACTER_COMICS } from "../../store/actions/characters.action";
-import { getData, getSrc } from "../../utils/helpers";
-import Paper from "@mui/material/Paper";
-import { Typography } from "@mui/material";
-import Spinner from "../Spinners";
-// import { makeStyles } from "@mui/styles";
+import { getData, getDispatch, getSelector, getSrc } from "../../utils/helpers";
+import { ImageListItemBar, Typography } from "@mui/material";
 import { ThemeProvider } from "@mui/material/styles";
 import { paperTheme } from "../../utils/themes";
+import { REQUEST } from "../../utils/constant";
+import { TData, TThumbnail } from "../../types/Response";
+import TCharacter from "../../types/character";
+import TComic, { TComicExtended } from "../../types/comic";
+import TStory, { TStoryExtended } from "../../types/stories";
+import Paper from "@mui/material/Paper";
+import ImageList from "@mui/material/ImageList";
+import ImageListItem from "@mui/material/ImageListItem";
+import Spinner from "../Spinners";
 
 type QuitedImageListprops = {
-  characterId: number | string | undefined;
+  id: number | string | undefined;
+  type: REQUEST;
+  title?: string;
+  variant?: "quilted" | "masonry";
+  message?: string;
+  onRedirect?: (id: number | string) => void;
 };
 
 const srcset = (image: string, size: number, rows = 1, cols = 1) => {
@@ -26,77 +32,156 @@ const srcset = (image: string, size: number, rows = 1, cols = 1) => {
   };
 };
 
-const QuiltedImageList = (props: QuitedImageListprops) => {
-  const { characterId } = props;
+const QuiltedImageList = (props: QuitedImageListprops): React.ReactElement => {
+  const { id, type, variant, title, message, onRedirect } = props;
 
   const dispatch = useDispatch();
-  const { loading, results, total } = useSelector(
-    GET_CHARACTERS_COMICS_SELECTOR
-  );
+  const selector: any = useSelector(getSelector(type));
+  const { loading, results, total } = selector;
 
-  const [comics, setComics] = useState<TComicExtended[]>([]);
-
-  useEffect(() => {
-    dispatch(RETRIEVE_CHARACTER_COMICS(characterId));
-  }, [dispatch, characterId]);
+  const [data, setData] = useState<
+    TComicExtended[] | TComicExtended[] | TStoryExtended[]
+  >([]);
 
   useEffect(() => {
-    setComics(getData(results));
+    dispatch(getDispatch(type, id));
+  }, [dispatch, id]);
+
+  useEffect(() => {
+    console.log("results", results);
+    console.log("getData(results)", getData(results));
+    setData(getData(results));
   }, [results]);
 
-  const renderContainer = () => {
-    return comics?.length > 0 ? (
+  const getImage = (thumbnail?: TThumbnail, images?: any[]) => {
+    return {
+      path: thumbnail
+        ? thumbnail?.path
+        : images?.length
+        ? images[0]?.path
+        : undefined,
+      extension: thumbnail
+        ? thumbnail?.extension
+        : images?.length
+        ? images[0]?.extension
+        : undefined,
+    };
+  };
+
+  const quilted = (): React.ReactElement => (
+    <Paper
+      sx={{ width: "100%" }}
+      elevation={9}
+      children={
+        <ImageList
+          style={{ borderRadius: 8 }}
+          sx={{ width: "100%", height: 400 }}
+          variant="quilted"
+          cols={4}
+          rowHeight={200}
+        >
+          {data?.map(
+            ({
+              images,
+              thumbnail,
+              id,
+              title,
+              col,
+              row,
+            }: TComicExtended | TComicExtended | TStoryExtended) => (
+              <ImageListItem key={id} cols={col} rows={row}>
+                <img
+                  {...srcset(
+                    getSrc(
+                      getImage(thumbnail, images).path,
+                      getImage(thumbnail, images).extension
+                    ),
+                    data.length,
+                    row,
+                    col
+                  )}
+                  alt={title}
+                  loading="lazy"
+                  onClick={() => onRedirect && onRedirect(id)}
+                />
+              </ImageListItem>
+            )
+          )}
+        </ImageList>
+      }
+    />
+  );
+
+  const masonry = (): React.ReactElement => (
+    <Paper
+      sx={{ width: "100%", height: 450, overflowY: "scroll" }}
+      elevation={9}
+      children={
+        <ImageList variant="masonry" cols={3} gap={8}>
+          {data?.map(
+            ({
+              images,
+              thumbnail,
+              id,
+              title,
+              col,
+              row,
+            }: TComicExtended | TComicExtended | TStoryExtended) => (
+              <>
+                <ImageListItem>
+                  <img
+                    src={`${getSrc(
+                      getImage(thumbnail, images).path,
+                      getImage(thumbnail, images).extension
+                    )}?w=248&fit=crop&auto=format`}
+                    srcSet={`${getSrc(
+                      getImage(thumbnail, images).path,
+                      getImage(thumbnail, images).extension
+                    )}?w=248&fit=crop&auto=format&dpr=2 2x`}
+                    alt={title}
+                    loading="lazy"
+                    onClick={() => onRedirect && onRedirect(id)}
+                  />
+                </ImageListItem>
+                <ImageListItemBar position="below" title={title} />
+              </>
+            )
+          )}
+        </ImageList>
+      }
+    />
+  );
+
+  const renderContainer = (): React.ReactElement => {
+    return data?.length > 0 ? (
       <>
-        <Typography noWrap variant="body1" color="text.secondary">
-          {`Comics by character (${total} items)`}
+        <Typography noWrap variant="h4" color="text.secondary">
+          {`${title} (${total} items)`}
         </Typography>
         <ThemeProvider theme={paperTheme}>
-          <Paper
-            sx={{ width: "100%" }}
-            elevation={9}
-            children={
-              <ImageList
-                style={{ borderRadius: 8 }}
-                sx={{ width: "100%", height: 400 }}
-                variant="quilted"
-                cols={4}
-                rowHeight={200}
-              >
-                {comics.map(
-                  ({ images, id, title, col, row }: TComicExtended) => (
-                    <ImageListItem key={id} cols={col} rows={row}>
-                      <img
-                        {...srcset(
-                          getSrc(images[0]?.path, images[0]?.extension),
-                          comics.length,
-                          row,
-                          col
-                        )}
-                        alt={title}
-                        loading="lazy"
-                      />
-                    </ImageListItem>
-                  )
-                )}
-              </ImageList>
-            }
-          />
+          {variant === "quilted" ? quilted() : masonry()}
         </ThemeProvider>
       </>
     ) : (
       <Typography
         className="text-center"
-        variant="h5"
+        variant="h3"
         gutterBottom
         color="text.secondary"
         component="div"
       >
-        No hay comics relacionados...
+        {message}
       </Typography>
     );
   };
 
   return !loading ? <>{renderContainer()}</> : <Spinner />;
+};
+
+QuiltedImageList.defaultProps = {
+  message: "No results found...",
+  title: "Resultados, ",
+  variant: "quilted",
 };
 
 export default QuiltedImageList;

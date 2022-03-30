@@ -32,4 +32,7 @@ type TStory = {
   events: TGeneric;
 };
 
+export type TStoryExtended = TStory & { col: number; row: number };
+
+
 export default TStory;

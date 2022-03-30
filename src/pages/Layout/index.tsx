@@ -1,12 +1,11 @@
 import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { Link, Outlet } from "react-router-dom";
-import routesConfig from "../config/routesConfig";
-import { RETRIEVE_CHARACTERS } from "../store/actions/characters.action";
+import routesConfig from "../../config/routesConfig";
+import { RETRIEVE_CHARACTERS } from "../../store/actions/characters.action";
 
-const Layout = (props) => {
+const Layout = () => {
   const urls = routesConfig();
-  
 
   return (
     <div>
@@ -25,9 +24,12 @@ const Layout = (props) => {
               <span className="icon-bar"></span>{" "}
               <span className="icon-bar"></span>{" "}
             </button>
-            <a className="navbar-brand page-scroll" href="#page-top">
+            <Link
+              className="navbar-brand page-scroll"
+              to={"/characters"}
+            >
               Marvel
-            </a>{" "}
+            </Link>
           </div>
 
           <div
@@ -35,7 +37,8 @@ const Layout = (props) => {
             id="bs-example-navbar-collapse-1"
           >
             <ul className="nav navbar-nav navbar-right">
-              {urls?.length && urls?.map((url, index) => (
+              {urls?.length &&
+                urls?.map((url, index) => (
                   <li key={index}>
                     <Link to={url.path} className="page-scroll">
                       {url.title}

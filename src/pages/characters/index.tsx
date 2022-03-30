@@ -15,7 +15,7 @@ import { RETRIEVE_COMICS } from "../../store/actions/comic.actions";
 import { AnyAction } from "@reduxjs/toolkit";
 import { TParameters } from "../../types/parameters";
 import { RETRIEVE_CHARACTERS } from "../../store/actions/characters.action";
-import { constants } from "../../utils/constant";
+import { constants, REQUEST } from "../../utils/constant";
 import { Navigate, NavigateOptions, useNavigate } from "react-router-dom";
 import { getSrc } from "../../utils/helpers";
 
@@ -36,6 +36,23 @@ export const Characters = (): React.ReactElement => {
     label: "",
     id: "",
   });
+
+  const handleNext = () => {
+    setHasMore(false);
+    clearTimeout(loadNextTimeout);
+
+    loadNextTimeout = setTimeout(() => {
+      setOffset((prev) => prev + constants.offset);
+    }, 500);
+  };
+
+  const handleRedirect = (id: number | string) => {
+    const options: NavigateOptions = {
+      replace: false,
+      state: {},
+    };
+    return navigate(`/characters/details/${id}`, options);
+  };
 
   const handleChangeSearch = ({
     target,
@@ -58,7 +75,7 @@ export const Characters = (): React.ReactElement => {
   );
 
   const handleDistpachComics = useCallback(
-    (titleStartsWith: string): AnyAction => {
+    ({ titleStartsWith }: TParameters): AnyAction => {
       let parameters: TParameters = {
         ...(titleStartsWith !== "" && { titleStartsWith: titleStartsWith }),
       };
@@ -67,23 +84,6 @@ export const Characters = (): React.ReactElement => {
     },
     []
   );
-
-  const handleNext = () => {
-    setHasMore(false);
-    clearTimeout(loadNextTimeout);
-
-    loadNextTimeout = setTimeout(() => {
-      setOffset((prev) => prev + constants.offset);
-    }, 500);
-  };
-
-  const handleRedirect = (characterId: number | string) => {
-    const options: NavigateOptions = {
-      replace: false,
-      state: {},
-    };
-    return navigate(`/characters/details/${characterId}`, options);
-  };
 
   useEffect(() => {
     setCharacters((prev) => [...prev, ...results]);
@@ -95,6 +95,10 @@ export const Characters = (): React.ReactElement => {
   useEffect(() => {
     let parameters: TParameters = {
       offset: offset,
+    };
+
+    parameters = {
+      ...parameters,
       ...(searchDebounced !== "" && { nameStartsWith: searchDebounced }),
       ...(comicSelected?.id && { comics: parseInt(comicSelected?.id) }),
     };
@@ -142,6 +146,8 @@ export const Characters = (): React.ReactElement => {
 
           <div className="content-center-row">
             <AutoCompleteFilter
+            label="Select comic..."
+              type={REQUEST.GET_COMICS}
               variant={"outlined"}
               value={comicSelected}
               onDispatch={handleDistpachComics}
