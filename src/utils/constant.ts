@@ -1,3 +1,15 @@
 export const constants = {
-    offset: 20,
+  offset: 20,
+};
+
+export enum REQUEST {
+  GET_CHARACTERS,
+  GET_CHARACTER_COMICS,
+  GET_CHARACTER_STORIES,
+
+  GET_COMICS,
+  GET_COMIC_CHARACTERS,
+
+  GET_STORIES,
+  GET_STORY_CHARACTERS,
 }

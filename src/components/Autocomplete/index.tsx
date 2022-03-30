@@ -75,11 +75,3 @@ AutoComplete.defaultProps = {
 };
 
 export default AutoComplete;
-
-{
-  /* <TextField
-            {...params}
-            label={label}
-            
-          /> */
-}

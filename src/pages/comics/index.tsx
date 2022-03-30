@@ -93,12 +93,12 @@ export const Comics = (): React.ReactElement => {
     }, 500);
   };
 
-  const handleRedirect = (characterId: number | string) => {
+  const handleRedirect = (id: number | string) => {
     const options: NavigateOptions = {
       replace: false,
       state: {},
     };
-    return navigate(`/comics/details/${characterId}`, options);
+    return navigate(`/comics/details/${id}`, options);
   };
 
   const handleFormatSelect = (event: SelectChangeEvent<string>) => {

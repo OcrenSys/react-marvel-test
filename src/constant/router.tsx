@@ -1,11 +1,12 @@
 import React from "react";
 import { RouteObject, useRoutes } from "react-router-dom";
-import Layout from "../components/layout";
+import Layout from "../pages/Layout";
 import { Characters } from "../pages/characters";
 import { CharacterDetails } from "../pages/characters/details";
 import { Comics } from "../pages/comics";
 import { ComicDetails } from "../pages/comics/details";
 import { Stories } from "../pages/stories";
+import { StoryDetails } from "../pages/stories/details";
 
 const Router = (): React.ReactElement | null => {
   let routes: RouteObject[] = [
@@ -36,6 +37,10 @@ const Router = (): React.ReactElement | null => {
         {
           path: "/stories",
           element: <Stories />,
+        },
+        {
+          path: "/stories/details/:id",
+          element: <StoryDetails />,
         },
         {
           path: "/*",

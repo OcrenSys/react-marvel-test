@@ -3,6 +3,7 @@ const routesApi =  {
         root : '/characters',
         details: (id: number | string ): string =>  `/characters/${id}`,
         comics: (id: number | string ): string =>  `/characters/${id}/comics`,
+        stories: (id: number | string ): string =>  `/characters/${id}/stories`,
     },
     comics: {
         root : '/comics',
@@ -11,7 +12,8 @@ const routesApi =  {
     },
     stories: {
         root : '/stories',
-        details: (id: number | string ): string =>  `/stories/${id}`
+        details: (id: number | string ): string =>  `/stories/${id}`,
+        characters: (id: number | string ): string =>  `/stories/${id}/characters`
     },
 }
 

@@ -1,5 +1,5 @@
 import { createReducer } from "@reduxjs/toolkit";
-import { RETRIEVE_CHARACTERS, RETRIEVE_CHARACTER_COMICS, RETRIEVE_CHARACTER_DETAILS } from "../actions/characters.action";
+import { RETRIEVE_CHARACTERS, RETRIEVE_CHARACTER_COMICS, RETRIEVE_CHARACTER_DETAILS, RETRIEVE_CHARACTER_STORIES } from "../actions/characters.action";
 import DataInitialState from "../states/data.state";
 
 const charactersReducer = createReducer(DataInitialState, (builder) => {
@@ -70,5 +70,29 @@ export const characterComicsReducer = createReducer(
     }));
   }
 );
+export const characterStoriesReducer = createReducer(
+  DataInitialState,
+  (builder) => {
+    builder.addCase(RETRIEVE_CHARACTER_STORIES.pending, (state) => ({
+      ...state,
+      loading: true,
+      error: false,
+      results: [],
+    }));
+    builder.addCase(RETRIEVE_CHARACTER_STORIES.rejected, (state) => ({
+      ...state,
+      loading: false,
+      error: true,
+      results: [],
+    }));
+    builder.addCase(RETRIEVE_CHARACTER_STORIES.fulfilled, (state, { payload }) => ({
+      ...state,
+      ...payload,
+      loading: false,
+      error: false,
+    }));
+  }
+);
+
 
 export default charactersReducer;

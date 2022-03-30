@@ -27,7 +27,6 @@ export const RETRIEVE_CHARACTER_DETAILS: any = createAsyncThunk(
   }
 );
 
-
 export const RETRIEVE_CHARACTER_COMICS: any = createAsyncThunk(
   "CHARACTERS/RETRIEVE_CHARACTER_COMICS",
   async (id: number) => {
@@ -35,3 +34,12 @@ export const RETRIEVE_CHARACTER_COMICS: any = createAsyncThunk(
     return response.data?.data;
   }
 );
+
+export const RETRIEVE_CHARACTER_STORIES: any = createAsyncThunk(
+  "CHARACTERS/RETRIEVE_CHARACTER_STORIES",
+  async (id: number) => {
+    const response = await axiosConfig.get(routesApi.characters.stories(id));
+    return response.data?.data;
+  }
+);
+

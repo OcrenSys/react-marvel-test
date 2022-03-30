@@ -15,6 +15,7 @@ const store = configureStore({
     characters: TData<TCharacter>,
     characterDetails: TData<TCharacter>,
     characterComics: TData<TComic>,
+    characterStories: TData<TComic>,
     /* COMICS SECTION */
     comics: TData<TComic>,
     comicDetails: TData<TComic>,
@@ -22,6 +23,7 @@ const store = configureStore({
     /* STORIES SECTION */
     stories: TData<TStory>,
     storyDetails: TData<TStory>,
+    storyCharacters: TData<TStory>,
 };
 
 export default store;

@@ -1,27 +1,35 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
-import Paper from "@mui/material/Paper";
+import { NavigateOptions, useNavigate, useParams } from "react-router-dom";
 import { Typography } from "@mui/material";
-import QuiltedImageList from "../../components/ImageList";
 import { ThemeProvider } from "@mui/material/styles";
 import { paperTheme } from "../../utils/themes";
 import { GET_COMICS_DETAILS_SELECTOR } from "../../store/selectors/comics.selector";
-import TComic from "../../types/comic";
 import { RETRIEVE_COMIC_DETAILS } from "../../store/actions/comic.actions";
 import { getSrc } from "../../utils/helpers";
+import { REQUEST } from "../../utils/constant";
+import QuiltedImageList from "../../components/ImageList";
+import Paper from "@mui/material/Paper";
+import TComic from "../../types/comic";
 
 export const StoryDetails = (): React.ReactElement => {
+  let navigate = useNavigate();
   let { id } = useParams();
 
   const dispatch = useDispatch();
   const [story, setStory] = useState<TComic>();
-  const { loading, results, total } = useSelector(
-    GET_COMICS_DETAILS_SELECTOR
-  );
+  const { loading, results, total } = useSelector(GET_COMICS_DETAILS_SELECTOR);
+
+  const handleRedirect = (url: string) => {
+    const options: NavigateOptions = {
+      replace: false,
+      state: {},
+    };
+    return navigate(url, options);
+  };
 
   useEffect(() => {
-    const [first, ] = results;
+    const [first] = results;
     setStory(first);
   }, [results]);
 
@@ -40,8 +48,11 @@ export const StoryDetails = (): React.ReactElement => {
                 elevation={9}
                 children={
                   <img
-                    style={{ borderRadius: 8, minHeight: 600}}
-                    src={getSrc(story?.thumbnail?.path, story?.thumbnail?.extension)}
+                    style={{ borderRadius: 8, minHeight: 600 }}
+                    src={getSrc(
+                      story?.thumbnail?.path,
+                      story?.thumbnail?.extension
+                    )}
                     className="img-responsive"
                     alt=""
                   />
@@ -62,7 +73,14 @@ export const StoryDetails = (): React.ReactElement => {
                   </Typography>
                 </div>
 
-                <QuiltedImageList id={id} type={"comic"}/>
+                <QuiltedImageList
+                  id={id}
+                  variant={"masonry"}
+                  title={"Character's story, "}
+                  message={"Characters not found..."}
+                  type={REQUEST.GET_STORY_CHARACTERS}
+                  onRedirect={(id) => handleRedirect(`/characters/details/${id}`)}
+                />
               </div>
             </div>
           </div>
