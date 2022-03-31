@@ -1,28 +1,32 @@
-import { useCallback, useEffect, useState } from "react";
+import React from "react";
+import { Suspense, useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Typography } from "@mui/material";
-
-import AutoCompleteFilter from "../../components/Autocomplete/AutoCompleteFilter";
-import InfiniteScrollWrapper from "../../components/InfiniteScrollWrapper";
-import SearchComponent from "../../components/Search";
-import CardComponent from "../../components/Card";
-import useDebounce from "../../hooks/useDebounce";
-
-import { GET_CHARACTERS_SELECTOR } from "../../store/selectors/characters.selector";
-import TCharacter from "../../types/character";
-import TOption from "../../types/TOption";
-import { RETRIEVE_COMICS } from "../../store/actions/comic.actions";
+import { Skeleton, Typography } from "@mui/material";
 import { AnyAction } from "@reduxjs/toolkit";
-import { TParameters } from "../../types/parameters";
+import { GET_CHARACTERS_SELECTOR } from "../../store/selectors/characters.selector";
 import { RETRIEVE_CHARACTERS } from "../../store/actions/characters.action";
+import { RETRIEVE_COMICS } from "../../store/actions/comic.actions";
 import { constants, REQUEST } from "../../utils/constant";
-import { Navigate, NavigateOptions, useNavigate } from "react-router-dom";
+import { NavigateOptions, useNavigate } from "react-router-dom";
 import { getSrc } from "../../utils/helpers";
+import TParameters from "../../types/parameters";
+import TOption from "../../types/TOption";
+import useDebounce from "../../hooks/useDebounce";
+import TCharacter from "../../types/character";
+
+const CardComponent = React.lazy(() => import(/* webpackChunkName: "__Chunk__CardComponent__" */ "../../components/Card"));
+const SearchComponent = React.lazy(() => import(/* webpackChunkName: "__Chunk__SearchComponent__" */ "../../components/Search"));
+const InfiniteScrollWrapper = React.lazy(
+  () => import(/* webpackChunkName: "__Chunk__InfiniteScrollWrapper__" */ "../../components/InfiniteScrollWrapper")
+);
+const AutoCompleteFilter = React.lazy(
+  () => import(/* webpackChunkName: "__Chunk__AutoCompleteFilter__" */ "../../components/Autocomplete/AutoCompleteFilter")
+);
 
 let loadNextTimeout: NodeJS.Timeout;
 const scrollTarget: string = "scrollableCharacterDiv";
 
-export const Characters = (): React.ReactElement => {
+const Characters = (): React.ReactElement => {
   let navigate = useNavigate();
   const dispatch = useDispatch();
   const { loading, results, total } = useSelector(GET_CHARACTERS_SELECTOR);
@@ -116,15 +120,26 @@ export const Characters = (): React.ReactElement => {
               style={{ paddingRight: 4, paddingLeft: 4 }}
               className="col-sm-4 col-md-3 col-lg-3"
             >
-              <CardComponent
-                title={character.name}
-                src={getSrc(
-                  character?.thumbnail?.path,
-                  character?.thumbnail?.extension
-                )}
-                description={`${character.description}`}
-                onRedirect={() => handleRedirect(character.id)}
-              />
+              <Suspense
+                fallback={
+                  <Skeleton
+                    animation="pulse"
+                    height={200}
+                    width={260}
+                    style={{ marginBottom: 6, borderRadius: 16 }}
+                  />
+                }
+              >
+                <CardComponent
+                  title={character.name}
+                  src={getSrc(
+                    character?.thumbnail?.path,
+                    character?.thumbnail?.extension
+                  )}
+                  description={`${character.description}`}
+                  onRedirect={() => handleRedirect(character.id)}
+                />
+              </Suspense>
             </div>
           ))
         ) : !loading && !characters.length ? (
@@ -139,14 +154,14 @@ export const Characters = (): React.ReactElement => {
   );
 
   return (
-    <div className="top-100  text-center">
+    <div className="text-center">
       <div className="container">
         <div className="section-title">
           <h2>Charactersc</h2>
 
           <div className="content-center-row">
             <AutoCompleteFilter
-            label="Select comic..."
+              label="Select comic..."
               type={REQUEST.GET_COMICS}
               variant={"outlined"}
               value={comicSelected}
@@ -176,3 +191,5 @@ export const Characters = (): React.ReactElement => {
     </div>
   );
 };
+
+export default Characters;

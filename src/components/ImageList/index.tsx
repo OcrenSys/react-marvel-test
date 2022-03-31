@@ -48,8 +48,6 @@ const QuiltedImageList = (props: QuitedImageListprops): React.ReactElement => {
   }, [dispatch, id]);
 
   useEffect(() => {
-    console.log("results", results);
-    console.log("getData(results)", getData(results));
     setData(getData(results));
   }, [results]);
 
@@ -66,6 +64,26 @@ const QuiltedImageList = (props: QuitedImageListprops): React.ReactElement => {
         ? images[0]?.extension
         : undefined,
     };
+  };
+
+  const getSrcImage = (
+    thumbnail?: TThumbnail,
+    images?: any[]
+  ): { src: string; srcSet: string } => {
+    const result: string = getSrc(
+      getImage(thumbnail, images).path,
+      getImage(thumbnail, images).extension
+    );
+
+    return result === "img/not_found.png"
+      ? {
+          src: `${result}`,
+          srcSet: `${result}`,
+        }
+      : {
+          src: `${result}?w=248&fit=crop&auto=format`,
+          srcSet: `${result}?w=248&fit=crop&auto=format&dpr=2 2x`,
+        };
   };
 
   const quilted = (): React.ReactElement => (
@@ -124,27 +142,20 @@ const QuiltedImageList = (props: QuitedImageListprops): React.ReactElement => {
               thumbnail,
               id,
               title,
-              col,
-              row,
-            }: TComicExtended | TComicExtended | TStoryExtended) => (
-              <>
+              name,
+            }: TComicExtended | TComicExtended | TStoryExtended, index: number) => (
+              <div key={index}>
                 <ImageListItem>
                   <img
-                    src={`${getSrc(
-                      getImage(thumbnail, images).path,
-                      getImage(thumbnail, images).extension
-                    )}?w=248&fit=crop&auto=format`}
-                    srcSet={`${getSrc(
-                      getImage(thumbnail, images).path,
-                      getImage(thumbnail, images).extension
-                    )}?w=248&fit=crop&auto=format&dpr=2 2x`}
-                    alt={title}
+                    src={getSrcImage(thumbnail, images).src}
+                    srcSet={getSrcImage(thumbnail, images).srcSet}
+                    alt={name || title || "---"}
                     loading="lazy"
                     onClick={() => onRedirect && onRedirect(id)}
                   />
                 </ImageListItem>
                 <ImageListItemBar position="below" title={title} />
-              </>
+              </div>
             )
           )}
         </ImageList>

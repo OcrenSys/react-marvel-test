@@ -12,7 +12,7 @@ import { GET_CHARACTERS_SELECTOR } from "../../store/selectors/characters.select
 import { GET_COMICS_SELECTOR } from "../../store/selectors/comics.selector";
 import TCharacter from "../../types/character";
 import TComic from "../../types/comic";
-import { TParameters } from "../../types/parameters";
+import TParameters from "../../types/parameters";
 import TStory from "../../types/stories";
 import TOption from "../../types/TOption";
 import { REQUEST } from "../../utils/constant";
@@ -34,7 +34,7 @@ type TAutoCompleteFilterProps = {
 
 const AutoCompleteFilter = (props: TAutoCompleteFilterProps) => {
   /* variables initialization */
-  const {label,  type, variant, value, onChange, onDispatch } = props;
+  const { label, type, variant, value, onChange, onDispatch } = props;
   const [search, setSearch] = useState<string>();
   const searchDebounced = useDebounce(search, 600);
   const [parameters, setParameters] = useState<TParameters>({
@@ -47,8 +47,6 @@ const AutoCompleteFilter = (props: TAutoCompleteFilterProps) => {
 
   const selector: any = useSelector(getSelector(type));
   const { loading, results, total } = selector;
-
-  console.log("results, autocomopletefilter...", type,  results)
 
   useEffect(() => {
     dispatch(onDispatch(parameters));

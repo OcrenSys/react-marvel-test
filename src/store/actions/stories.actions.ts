@@ -1,7 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axiosConfig from "../../config/axiosConfig";
 import routesApi from "../../config/routesApi";
-import { TParameters } from "../../types/parameters";
+import TParameters from "../../types/parameters";
 
 export const RETRIEVE_STORIES: any = createAsyncThunk(
   "STORIES/RETRIEVE_STORIES",

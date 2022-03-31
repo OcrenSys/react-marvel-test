@@ -12,7 +12,7 @@ import QuiltedImageList from "../../components/ImageList";
 import Paper from "@mui/material/Paper";
 import TComic from "../../types/comic";
 
-export const ComicDetails = (): React.ReactElement => {
+const ComicDetails = (): React.ReactElement => {
   let navigate = useNavigate();
   let { id } = useParams();
 
@@ -89,3 +89,5 @@ export const ComicDetails = (): React.ReactElement => {
     </div>
   );
 };
+
+export default ComicDetails;

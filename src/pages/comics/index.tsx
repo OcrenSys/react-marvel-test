@@ -1,21 +1,22 @@
-import React, { useEffect, useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RETRIEVE_COMICS } from "../../store/actions/comic.actions";
-import { TParameters } from "../../types/parameters";
 import { constants } from "../../utils/constant";
 import { NavigateOptions, useNavigate } from "react-router-dom";
 import { GET_COMICS_SELECTOR } from "../../store/selectors/comics.selector";
-import { SelectChangeEvent, Typography } from "@mui/material";
-import TComic from "../../types/comic";
-/* CUSTOM COMPONENTS */
-import SearchComponent from "../../components/Search";
-import CardComponent from "../../components/Card";
-import InfiniteScrollWrapper from "../../components/InfiniteScrollWrapper";
-
-import useDebounce from "../../hooks/useDebounce";
+import { SelectChangeEvent, Skeleton, Typography } from "@mui/material";
 import { getSrc } from "../../utils/helpers";
-import SelectComponent from "../../components/Select";
+import TParameters from "../../types/parameters";
+import TComic from "../../types/comic";
 import TOption from "../../types/TOption";
+import useDebounce from "../../hooks/useDebounce";
+
+const CardComponent = React.lazy(() => import(/* webpackChunkName: "__Chunk__CardComponent__" */ "../../components/Card"));
+const SelectComponent = React.lazy(() => import(/* webpackChunkName: "__Chunk__SelectComponent__" */ "../../components/Select"));
+const SearchComponent = React.lazy(() => import(/* webpackChunkName: "__Chunk__SearchComponent__" */ "../../components/Search"));
+const InfiniteScrollWrapper = React.lazy(
+  () => import(/* webpackChunkName: "__Chunk__InfiniteScrollWrapper__" */ "../../components/InfiniteScrollWrapper")
+);
 
 let loadNextTimeout: NodeJS.Timeout;
 const scrollTarget: string = "scrollableCharacterDiv";
@@ -62,7 +63,7 @@ const orderByFilter = [
   { label: "Modified", id: "modified" },
 ];
 
-export const Comics = (): React.ReactElement => {
+const Comics = (): React.ReactElement => {
   let navigate = useNavigate();
   const dispatch = useDispatch();
   const { loading, results, total } = useSelector(GET_COMICS_SELECTOR);
@@ -135,15 +136,26 @@ export const Comics = (): React.ReactElement => {
               style={{ paddingRight: 4, paddingLeft: 4 }}
               className="col-sm-4 col-md-3 col-lg-3"
             >
-              <CardComponent
-                title={comic.title}
-                src={getSrc(
-                  comic?.thumbnail?.path,
-                  comic?.thumbnail?.extension
-                )}
-                description={`${comic.description}`}
-                onRedirect={() => handleRedirect(comic.id)}
-              />
+              <Suspense
+                fallback={
+                  <Skeleton
+                    animation="pulse"
+                    height={200}
+                    width={260}
+                    style={{ marginBottom: 6, borderRadius: 16 }}
+                  />
+                }
+              >
+                <CardComponent
+                  title={comic.title}
+                  src={getSrc(
+                    comic?.thumbnail?.path,
+                    comic?.thumbnail?.extension
+                  )}
+                  description={`${comic.description}`}
+                  onRedirect={() => handleRedirect(comic.id)}
+                />
+              </Suspense>
             </div>
           ))
         ) : !loading && !comics.length ? (
@@ -193,3 +205,5 @@ export const Comics = (): React.ReactElement => {
     </div>
   );
 };
+
+export default Comics;

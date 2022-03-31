@@ -11,9 +11,15 @@ import reportWebVitals from "./reportWebVitals";
 import store from "./store";
 import theme from "./theme";
 import "./index.css";
+import { Auth0Provider } from "@auth0/auth0-react";
+import environment from "./environment";
 
 ReactDOM.render(
-  <React.StrictMode>
+  <Auth0Provider
+    domain={environment.AUTH_DOANIN}
+    clientId={environment.AUTH_CLIENT_ID}
+    redirectUri={window.location.origin}
+  >
     <Provider store={store}>
       <BrowserRouter>
         <ThemeProvider theme={theme}>
@@ -22,7 +28,7 @@ ReactDOM.render(
         </ThemeProvider>
       </BrowserRouter>
     </Provider>
-  </React.StrictMode>,
+    </Auth0Provider>,
   document.getElementById("root")
 );
 

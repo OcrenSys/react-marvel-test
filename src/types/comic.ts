@@ -4,6 +4,7 @@ type TComic = {
   id: number;
   digitalId: number;
   title: string;
+  name: string;
   issueNumber: number;
   variantDescription: string;
   description: string;

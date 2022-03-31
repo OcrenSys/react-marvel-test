@@ -3,6 +3,7 @@ import { TDate, TGeneric, TItem, TPrice, TThumbnail, TUrl } from "./Response";
 type TStory = {
   id: number;
   upc: string;
+  name: string;
   ean: string;
   issn: string;
   isbn: string;

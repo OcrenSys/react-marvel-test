@@ -4,7 +4,8 @@ import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import Typography from "@mui/material/Typography";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
-import { Button, CardActionArea, CardActions } from "@mui/material";
+import { CardActions, IconButton } from "@mui/material";
+import FavoriteIcon from "@mui/icons-material/Favorite";
 
 type TCardProps = {
   title: string;
@@ -53,15 +54,20 @@ const CardComponent = ({ title, description, src, onRedirect }: TCardProps) => {
           justifyContent: "flex-end",
         }}
       >
-        <Button
+        <IconButton
+          aria-label="add to favorites"
           color="primary"
-          variant="outlined"
-          endIcon={<ArrowForwardIosIcon style={{ fontSize: 10 }} />}
-          size="small"
           onClick={onRedirect}
         >
-          Ver más
-        </Button>
+          <FavoriteIcon />
+        </IconButton>
+        <IconButton
+          aria-label="more details"
+          color="primary"
+          onClick={onRedirect}
+        >
+          <ArrowForwardIosIcon />
+        </IconButton>
       </CardActions>
     </Card>
   );

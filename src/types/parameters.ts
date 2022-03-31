@@ -1,4 +1,4 @@
-export type TParameters = {
+type TParameters = {
     title?: string,
     titleStartsWith?: string,
     nameStartsWith?: string,
@@ -10,3 +10,5 @@ export type TParameters = {
     limit?: number,
     offset?: number,
 }
+
+export default TParameters

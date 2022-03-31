@@ -12,7 +12,7 @@ import { paperTheme } from "../../utils/themes";
 import { getSrc } from "../../utils/helpers";
 import { REQUEST } from "../../utils/constant";
 
-export const CharacterDetails = (): React.ReactElement => {
+const CharacterDetails = (): React.ReactElement => {
   let navigate = useNavigate();
   let { id } = useParams();
 
@@ -111,3 +111,5 @@ export const CharacterDetails = (): React.ReactElement => {
     </div>
   );
 };
+
+export default CharacterDetails;
