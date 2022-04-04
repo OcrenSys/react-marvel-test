@@ -75,13 +75,16 @@ const Characters = (): React.ReactElement => {
       setOffset(0);
       setComicSelected(value);
     },
-    [setComicSelected]
+    []
   );
 
   const handleDistpachComics = useCallback(
     ({ titleStartsWith }: TParameters): AnyAction => {
+
       let parameters: TParameters = {
-        ...(titleStartsWith !== "" && { titleStartsWith: titleStartsWith }),
+        ...(titleStartsWith !== "" && { 
+          titleStartsWith: titleStartsWith 
+        }),
       };
 
       return RETRIEVE_COMICS(parameters);

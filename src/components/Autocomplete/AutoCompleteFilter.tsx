@@ -1,27 +1,22 @@
+import React, { useEffect, useState } from "react";
 import {
   AutocompleteChangeDetails,
   AutocompleteChangeReason,
   AutocompleteInputChangeReason,
 } from "@mui/material";
 import { AnyAction } from "@reduxjs/toolkit";
-import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import AutoComplete from ".";
-import useDebounce from "../../hooks/useDebounce";
-import { GET_CHARACTERS_SELECTOR } from "../../store/selectors/characters.selector";
-import { GET_COMICS_SELECTOR } from "../../store/selectors/comics.selector";
-import TCharacter from "../../types/character";
-import TComic from "../../types/comic";
-import TParameters from "../../types/parameters";
-import TStory from "../../types/stories";
-import TOption from "../../types/TOption";
 import { REQUEST } from "../../utils/constant";
 import { getSelector } from "../../utils/helpers";
+import AutoComplete from ".";
+import useDebounce from "../../hooks/useDebounce";
+import TParameters from "../../types/parameters";
+import TOption from "../../types/TOption";
 
 type TAutoCompleteFilterProps = {
   type: REQUEST;
   label: string;
-  variant: "filled" | "standard" | "outlined" | undefined;
+  variant?: "filled" | "standard" | "outlined";
   value?: TOption;
   onDispatch: (paremeters: TParameters) => AnyAction;
   onChange: (
@@ -35,11 +30,11 @@ type TAutoCompleteFilterProps = {
 const AutoCompleteFilter = (props: TAutoCompleteFilterProps) => {
   /* variables initialization */
   const { label, type, variant, value, onChange, onDispatch } = props;
-  const [search, setSearch] = useState<string>();
+  const [search, setSearch] = useState<string>("");
   const searchDebounced = useDebounce(search, 600);
   const [parameters, setParameters] = useState<TParameters>({
-    titleStartsWith: "",
-    nameStartsWith: "",
+    titleStartsWith: search,
+    // nameStartsWith: search, 
   } as TParameters);
 
   /* redux inicialization  */
@@ -56,6 +51,7 @@ const AutoCompleteFilter = (props: TAutoCompleteFilterProps) => {
     setParameters((prev) => ({
       ...prev,
       titleStartsWith: searchDebounced,
+      nameStartsWith: searchDebounced,
     }));
   }, [searchDebounced]);
 
@@ -86,6 +82,7 @@ const AutoCompleteFilter = (props: TAutoCompleteFilterProps) => {
 AutoCompleteFilter.defaultProps = {
   value: undefined,
   selector: "CHARACTER",
+  variant: "outlined",
   label: "select option...",
 };
 

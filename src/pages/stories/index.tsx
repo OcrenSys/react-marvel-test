@@ -14,12 +14,23 @@ import TOption from "../../types/TOption";
 import TStory from "../../types/stories";
 import useDebounce from "../../hooks/useDebounce";
 
-const CardComponent = React.lazy(() => import(/* webpackChunkName: "__Chunk__CardComponent__" */ "../../components/Card"));
+const CardComponent = React.lazy(
+  () =>
+    import(
+      /* webpackChunkName: "__Chunk__CardComponent__" */ "../../components/Card"
+    )
+);
 const AutoCompleteFilter = React.lazy(
-  () => import(/* webpackChunkName: "__Chunk__AutoCompleteFilter__" */ "../../components/Autocomplete/AutoCompleteFilter")
+  () =>
+    import(
+      /* webpackChunkName: "__Chunk__AutoCompleteFilter__" */ "../../components/Autocomplete/AutoCompleteFilter"
+    )
 );
 const InfiniteScrollWrapper = React.lazy(
-  () => import(/* webpackChunkName: "__Chunk__InfiniteScrollWrapper__" */ "../../components/InfiniteScrollWrapper")
+  () =>
+    import(
+      /* webpackChunkName: "__Chunk__InfiniteScrollWrapper__" */ "../../components/InfiniteScrollWrapper"
+    )
 );
 
 let loadNextTimeout: NodeJS.Timeout;
@@ -72,7 +83,6 @@ const Stories = (): React.ReactElement => {
 
   const handleChangeComicAutoComplete = useCallback(
     (event: React.SyntheticEvent, value: { label: string; id: string }) => {
-      console.log("stories, handleChangeComicAutoComplete");
 
       handleReset();
       setComicSelected(value);
@@ -82,7 +92,6 @@ const Stories = (): React.ReactElement => {
 
   const handleChangeCharacterAutoComplete = useCallback(
     (event: React.SyntheticEvent, value: { label: string; id: string }) => {
-      console.log("stories, handleChangeCharacterAutoComplete", handleReset());
 
       handleReset();
       setCharacterSelected(value);
@@ -92,30 +101,29 @@ const Stories = (): React.ReactElement => {
 
   const handleDispatchComics = useCallback(
     ({ titleStartsWith }: TParameters): AnyAction => {
-      console.log("stories, handleDispatchComics");
-
+      
       let parameters: TParameters = {
-        ...(searchComicsDebounced !== "" && {
+        ...(titleStartsWith !== "" && {
           titleStartsWith: titleStartsWith,
         }),
       };
       return RETRIEVE_COMICS(parameters);
     },
-    [searchComicsDebounced]
+    []
   );
 
   const handleDispatchCharacters = useCallback(
     ({ nameStartsWith }: TParameters): AnyAction => {
-      console.log("stories, handleDispatchComics");
 
       let parameters: TParameters = {
-        ...(searchCharactersDebounced !== "" && {
+        ...(nameStartsWith !== "" && {
           nameStartsWith: nameStartsWith,
         }),
       };
+
       return RETRIEVE_CHARACTERS(parameters);
     },
-    [searchCharactersDebounced]
+    []
   );
 
   useEffect(() => {
@@ -191,21 +199,17 @@ const Stories = (): React.ReactElement => {
           <h2>Stories</h2>
 
           <div className="content-center-row">
-            <Suspense fallback={<div>Loading...</div>}>
-              <AutoCompleteFilter
-                label="Select comic..."
-                type={REQUEST.GET_COMICS}
-                variant={"outlined"}
-                value={comicSelected}
-                onDispatch={handleDispatchComics}
-                onChange={handleChangeComicAutoComplete}
-              />
-            </Suspense>
+            <AutoCompleteFilter
+              label="Select comic..."
+              type={REQUEST.GET_COMICS}
+              value={comicSelected}
+              onDispatch={handleDispatchComics}
+              onChange={handleChangeComicAutoComplete}
+            />
             <Suspense fallback={<div>Loading...</div>}>
               <AutoCompleteFilter
                 label="Select character..."
                 type={REQUEST.GET_CHARACTERS}
-                variant={"outlined"}
                 value={characterSelected}
                 onDispatch={handleDispatchCharacters}
                 onChange={handleChangeCharacterAutoComplete}
