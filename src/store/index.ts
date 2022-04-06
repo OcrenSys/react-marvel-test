@@ -2,7 +2,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import TCharacter from "../types/character";
 import TComic from "../types/comic";
 import TFavorites from "../types/favorite";
-import { TData } from "../types/Response";
+import { TData } from "../types";
 import TStory from "../types/story";
 import appReducer from './reducers'
 

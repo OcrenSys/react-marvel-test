@@ -1,15 +1,38 @@
-const routesConfig = () => [
+type TRoutes = {
+  path: string;
+  title?: string;
+};
+
+export const paths = {
+  characters: "/characters",
+  characterDetails: "/characters/details/:id",
+  comics: "/comics",
+  comicDetails: "/comics/details/:id",
+  stories: "/stories",
+  storyDetails: "/stories",
+  favorites: "/favorites",
+  notfound: "/*",
+};
+
+const routesConfig = (): TRoutes[] => [
   {
-    path: "/characters",
+    path: paths.characters,
     title: "Characters",
   },
   {
-    path: "/comics",
+    path: paths.comics,
     title: "Comics",
   },
   {
-    path: "/stories",
+    path: paths.stories,
     title: "Stories",
+  },
+  {
+    path: paths.favorites,
+    title: "Favorites",
+  },
+  {
+    path: paths.notfound,
   },
 ];
 

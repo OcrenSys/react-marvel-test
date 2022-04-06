@@ -1,4 +1,4 @@
-import { TUrl, TItem, TDate, TThumbnail, TPrice, TGeneric } from "./Response";
+import { TUrl, TItem, TDate, TThumbnail, TPrice, TGeneric } from ".";
 
 type TComic = {
   id: number;

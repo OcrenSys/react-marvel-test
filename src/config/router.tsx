@@ -1,15 +1,18 @@
 import React from "react";
 import { RouteObject, useRoutes } from "react-router-dom";
+import { paths } from "../constant/routesConfig";
+import Favorites from "../pages/favorites";
 
-const Layout = React.lazy(() => import('../pages/Layout'));
+const Layout = React.lazy(() => import("../pages/Layout"));
 
-const Characters = React.lazy(() => import('../pages/characters'));
-const CharacterDetails = React.lazy(() => import('../pages/characters/details'));
-const Comics = React.lazy(() => import('../pages/comics'));
-const ComicDetails = React.lazy(() => import('../pages/comics/details'));
-const Stories = React.lazy(() => import('../pages/stories'));
-const StoryDetails = React.lazy(() => import('../pages/stories/details'));
-
+const Characters = React.lazy(() => import("../pages/characters"));
+const CharacterDetails = React.lazy(
+  () => import("../pages/characters/details")
+);
+const Comics = React.lazy(() => import("../pages/comics"));
+const ComicDetails = React.lazy(() => import("../pages/comics/details"));
+const Stories = React.lazy(() => import("../pages/stories"));
+const StoryDetails = React.lazy(() => import("../pages/stories/details"));
 
 const Router = (): React.ReactElement | null => {
   let routes: RouteObject[] = [
@@ -22,31 +25,35 @@ const Router = (): React.ReactElement | null => {
           element: <Characters />,
         },
         {
-          path: "/characters",
+          path: paths.characters,
           element: <Characters />,
         },
         {
-          path: "/characters/details/:id",
+          path: paths.characterDetails,
           element: <CharacterDetails />,
         },
         {
-          path: "/comics",
+          path: paths.comics,
           element: <Comics />,
         },
         {
-          path: "/comics/details/:id",
+          path: paths.comicDetails,
           element: <ComicDetails />,
         },
         {
-          path: "/stories",
+          path: paths.stories,
           element: <Stories />,
         },
         {
-          path: "/stories/details/:id",
+          path: paths.storyDetails,
           element: <StoryDetails />,
         },
         {
-          path: "/*",
+          path: paths.favorites,
+          element: <Favorites />,
+        },
+        {
+          path: paths.notfound,
           element: <Characters />,
         },
       ],

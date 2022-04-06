@@ -1,3 +1,5 @@
+import { TThumbnail } from ".";
+
 type TFavorites = {
   userId: string;
   type: "characters" | "comics" | "stories" | "";
@@ -5,8 +7,10 @@ type TFavorites = {
 };
 
 export type TFavorite = {
-  userId?: string;
-  itemId: number;
+  id: number;
+  title: string;
+  description: string;
+  thumbnail: TThumbnail;
 };
 
 export default TFavorites;

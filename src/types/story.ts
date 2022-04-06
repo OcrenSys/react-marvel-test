@@ -1,4 +1,4 @@
-import { TDate, TGeneric, TItem, TPrice, TThumbnail, TUrl } from "./Response";
+import { TDate, TGeneric, TItem, TPrice, TThumbnail, TUrl } from ".";
 
 type TStory = {
   id: number;

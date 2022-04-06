@@ -5,7 +5,7 @@ import { ImageListItemBar, Typography } from "@mui/material";
 import { ThemeProvider } from "@mui/material/styles";
 import { paperTheme } from "../../utils/themes";
 import { REQUEST } from "../../utils/constant";
-import { TData, TThumbnail } from "../../types/Response";
+import { TData, TThumbnail } from "../../types";
 import TCharacter from "../../types/character";
 import TComic, { TComicExtended } from "../../types/comic";
 import TStory, { TStoryExtended } from "../../types/story";

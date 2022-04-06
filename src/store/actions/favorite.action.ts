@@ -22,17 +22,14 @@ export const SET_FAVORITES_ACTION = createAction(
   ({ userId, type }: TFavorites, favorite: TFavorite) => {
     let favorites: TFavorite[] = getStoragedFavorites(userId, type);
     let exist: boolean = favorites.some(
-      ({ itemId }: TFavorite) => itemId === favorite.itemId
+      ({ id }: TFavorite) => id === favorite.id
     );
 
     if (exist)
       favorites = [
-        ...favorites.filter(
-          ({ itemId }: TFavorite) => itemId !== favorite.itemId
-        ),
+        ...favorites.filter(({ id }: TFavorite) => id !== favorite.id),
       ];
-    else 
-      favorites = [...favorites, favorite];
+    else favorites = [...favorites, favorite];
 
     localStorage.setItem(`${userId}-${type}`, JSON.stringify(favorites));
 

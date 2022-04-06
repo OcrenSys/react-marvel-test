@@ -23,7 +23,7 @@ import { GET_FAVORITES_SELECTOR } from "../../store/selectors/favorites.selector
 
 type TCardProps = {
   title: string;
-  entity: TComic | TCharacter | TStory;
+  entity: TComic | TCharacter | TStory | TFavorite;
   src: string;
   onRedirect?: () => void;
 };
@@ -43,7 +43,14 @@ const CardComponent = ({ entity, title, src, onRedirect }: TCardProps) => {
         type: "characters",
       };
 
-      dispatch(SET_FAVORITES_ACTION(params, { itemId: entity.id }));
+      dispatch(
+        SET_FAVORITES_ACTION(params, {
+          id: entity?.id,
+          description: entity?.description,
+          thumbnail: entity?.thumbnail,
+          title: title,
+        })
+      );
     } else loginWithRedirect();
   };
 
@@ -60,7 +67,7 @@ const CardComponent = ({ entity, title, src, onRedirect }: TCardProps) => {
 
   useEffect(() => {
     setIsFavorite(
-      (list || []).some(({ itemId }: TFavorite) => itemId === entity.id) ||
+      (list || []).some(({ id }: TFavorite) => id === entity.id) ||
         false
     );
   }, [dispatch, list, entity.id]);

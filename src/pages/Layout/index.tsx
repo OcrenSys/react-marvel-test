@@ -180,6 +180,35 @@ const Layout = () => {
                   alignItems: "center",
                 }}
               >
+                {Boolean(userStorage) && (
+                  <Box
+                    sx={{
+                      flexGrow: 1,
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      flexDirection: "column",
+                    }}
+                  >
+                    <Typography
+                      style={{ marginRight: 16 }}
+                      variant="body1"
+                      noWrap
+                      component="div"
+                    >
+                      {`${userStorage?.name}`}
+                    </Typography>
+                    <Typography
+                      style={{ marginRight: 16 }}
+                      variant="body2"
+                      noWrap
+                      component="div"
+                    >
+                      {userStorage?.email}
+                    </Typography>
+                  </Box>
+                )}
+
                 <Tooltip title="Open settings">
                   <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                     <Avatar
@@ -192,35 +221,6 @@ const Layout = () => {
                     />
                   </IconButton>
                 </Tooltip>
-
-                {Boolean(userStorage) && (
-                  <Box
-                    sx={{
-                      flexGrow: 1,
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      flexDirection: "column",
-                    }}
-                  >
-                    <Typography
-                      style={{ marginLeft: 16 }}
-                      variant="body1"
-                      noWrap
-                      component="div"
-                    >
-                      {`${userStorage?.name} | ${userStorage?.nickname}`}
-                    </Typography>
-                    <Typography
-                      style={{ marginLeft: 16 }}
-                      variant="button"
-                      noWrap
-                      component="div"
-                    >
-                      {userStorage?.email}
-                    </Typography>
-                  </Box>
-                )}
               </Box>
 
               <Menu

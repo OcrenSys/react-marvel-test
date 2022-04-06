@@ -1,4 +1,4 @@
-import { TGeneric, TThumbnail, TUrl } from "./Response";
+import { TGeneric, TThumbnail, TUrl } from ".";
 
 type TCharacter = {
   id: number;
