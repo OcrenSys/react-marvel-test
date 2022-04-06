@@ -1,8 +1,9 @@
 import { configureStore } from "@reduxjs/toolkit";
 import TCharacter from "../types/character";
 import TComic from "../types/comic";
+import TFavorites from "../types/favorite";
 import { TData } from "../types/Response";
-import TStory from "../types/stories";
+import TStory from "../types/story";
 import appReducer from './reducers'
 
 const store = configureStore({
@@ -24,6 +25,7 @@ const store = configureStore({
     stories: TData<TStory>,
     storyDetails: TData<TStory>,
     storyCharacters: TData<TStory>,
+    favorites: TFavorites
 };
 
 export default store;

@@ -13,14 +13,31 @@ import TParameters from "../../types/parameters";
 import TOption from "../../types/TOption";
 import useDebounce from "../../hooks/useDebounce";
 import TCharacter from "../../types/character";
+import { useAuth0 } from "@auth0/auth0-react";
 
-const CardComponent = React.lazy(() => import(/* webpackChunkName: "__Chunk__CardComponent__" */ "../../components/Card"));
-const SearchComponent = React.lazy(() => import(/* webpackChunkName: "__Chunk__SearchComponent__" */ "../../components/Search"));
+const CardComponent = React.lazy(
+  () =>
+    import(
+      /* webpackChunkName: "__Chunk__CardComponent__" */ "../../components/Card"
+    )
+);
+const SearchComponent = React.lazy(
+  () =>
+    import(
+      /* webpackChunkName: "__Chunk__SearchComponent__" */ "../../components/Search"
+    )
+);
 const InfiniteScrollWrapper = React.lazy(
-  () => import(/* webpackChunkName: "__Chunk__InfiniteScrollWrapper__" */ "../../components/InfiniteScrollWrapper")
+  () =>
+    import(
+      /* webpackChunkName: "__Chunk__InfiniteScrollWrapper__" */ "../../components/InfiniteScrollWrapper"
+    )
 );
 const AutoCompleteFilter = React.lazy(
-  () => import(/* webpackChunkName: "__Chunk__AutoCompleteFilter__" */ "../../components/Autocomplete/AutoCompleteFilter")
+  () =>
+    import(
+      /* webpackChunkName: "__Chunk__AutoCompleteFilter__" */ "../../components/Autocomplete/AutoCompleteFilter"
+    )
 );
 
 let loadNextTimeout: NodeJS.Timeout;
@@ -80,10 +97,9 @@ const Characters = (): React.ReactElement => {
 
   const handleDistpachComics = useCallback(
     ({ titleStartsWith }: TParameters): AnyAction => {
-
       let parameters: TParameters = {
-        ...(titleStartsWith !== "" && { 
-          titleStartsWith: titleStartsWith 
+        ...(titleStartsWith !== "" && {
+          titleStartsWith: titleStartsWith,
         }),
       };
 
@@ -139,7 +155,7 @@ const Characters = (): React.ReactElement => {
                     character?.thumbnail?.path,
                     character?.thumbnail?.extension
                   )}
-                  description={`${character.description}`}
+                  entity={character}
                   onRedirect={() => handleRedirect(character.id)}
                 />
               </Suspense>

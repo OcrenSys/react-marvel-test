@@ -1,10 +1,9 @@
 import axios from "axios";
-// import { getAccessToken } from 'utils/auth.util';
 import environment from "../environment";
 
 const axiosConfig = axios.create({
   headers: {
-    Accept: "application/json, text/plain, */*"
+    Accept: "application/json, text/plain, */*",
   },
   params: {
     apikey: environment.REACT_API_PUBLIC_KEY,
@@ -12,6 +11,17 @@ const axiosConfig = axios.create({
     ts: environment.TIMESTAMP,
   },
   baseURL: environment.BASE_URL,
-}); 
+});
+
+export const axiosAuth = (token: string) => {
+  return axios.create({
+    headers: {
+      Accept: "application/json, text/plain, */*",
+      authorization: `Bearer ${token}`,
+    },
+    params: {},
+    baseURL: `${environment.AUTH_DOANIN}/api/v2`,
+  });
+};
 
 export default axiosConfig;

@@ -14,34 +14,37 @@ import Avatar from "@mui/material/Avatar";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import { useAuth0 } from "@auth0/auth0-react";
+import User from "../../types/user";
 
 const Layout = () => {
   const urls = routesConfig();
   const { isLoading, isAuthenticated, error, user, loginWithRedirect, logout } =
     useAuth0();
 
-  const authOptions = [
-    {
-      label: "LogIn",
-      handle: () => {
-        loginWithRedirect();
-      },
-    },
-    {
-      label: "LogOut",
-      handle: () => {
-        logout();
-      },
-    },
-  ];
-
-  const [userStorage, setUserStorage] = useState<any>(null);
+  const [userStorage, setUserStorage] = useState<User>();
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
     null
   );
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
     null
   );
+
+  const authOptions = [
+    {
+      label: "LogIn",
+      handle: () => {
+        handleLogIn();
+      },
+      hidden: Boolean(userStorage),
+    },
+    {
+      label: "LogOut",
+      handle: () => {
+        handleLogOut();
+      },
+      hidden: !Boolean(userStorage),
+    },
+  ];
 
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElNav(event.currentTarget);
@@ -57,7 +60,24 @@ const Layout = () => {
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
-  
+
+  const handleLogIn = async () => {
+    await loginWithRedirect();
+  };
+
+  const handleLogOut = () => {
+    logout();
+    localStorage.setItem("user", "");
+  };
+
+  useEffect(() => {
+    if (isAuthenticated) localStorage.setItem("user", JSON.stringify(user));
+  });
+
+  useEffect(() => {
+    const userData = localStorage.getItem("user");
+    setUserStorage(!!userData ? JSON.parse(userData) : null);
+  }, [isAuthenticated, loginWithRedirect, logout]);
 
   return (
     <>
@@ -173,7 +193,7 @@ const Layout = () => {
                   </IconButton>
                 </Tooltip>
 
-                {isAuthenticated && (
+                {Boolean(userStorage) && (
                   <Box
                     sx={{
                       flexGrow: 1,
@@ -189,7 +209,7 @@ const Layout = () => {
                       noWrap
                       component="div"
                     >
-                      {`${user?.name} | ${user?.nickname}`}
+                      {`${userStorage?.name} | ${userStorage?.nickname}`}
                     </Typography>
                     <Typography
                       style={{ marginLeft: 16 }}
@@ -197,7 +217,7 @@ const Layout = () => {
                       noWrap
                       component="div"
                     >
-                      {user?.email}
+                      {userStorage?.email}
                     </Typography>
                   </Box>
                 )}
@@ -219,11 +239,14 @@ const Layout = () => {
                 open={Boolean(anchorElUser)}
                 onClose={handleCloseUserMenu}
               >
-                {authOptions.map(({ label, handle }, index: number) => (
-                  <MenuItem key={index} onClick={handle}>
-                    <Typography textAlign="center">{label}</Typography>
-                  </MenuItem>
-                ))}
+                {authOptions.map(
+                  ({ label, handle, hidden }, index: number) =>
+                    !hidden && (
+                      <MenuItem key={index} onClick={handle}>
+                        <Typography textAlign="center">{label}</Typography>
+                      </MenuItem>
+                    )
+                )}
               </Menu>
             </Box>
             {/* END USER MENU */}

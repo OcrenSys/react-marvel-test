@@ -20,7 +20,9 @@ import {
 import { REQUEST } from "./constant";
 import TCharacter, { TCharacterExtended } from "../types/character";
 import TComic, { TComicExtended } from "../types/comic";
-import TStory, { TStoryExtended } from "../types/stories";
+import TStory, { TStoryExtended } from "../types/story";
+import User from "../types/user";
+import { TFavorite } from "../types/favorite";
 
 export const hasSearch = (property: string, search: string): boolean =>
   property.toLowerCase().includes(search.toLowerCase());
@@ -65,10 +67,7 @@ export const getData = (
 export const getSrc = (
   path: string | undefined,
   extension: string | undefined
-): string =>
-  `${
-    path || "img/not_found"
-  }.${extension || "png"}`;
+): string => `${path || "img/not_found"}.${extension || "png"}`;
 
 export const getSelector = (type: REQUEST): any => {
   switch (type) {
@@ -117,4 +116,17 @@ export const getDispatch = (
     default:
       return RETRIEVE_CHARACTER_COMICS(id);
   }
+};
+
+export const getStoragedFavorites = (
+  userId: string,
+  type: "characters" | "comics" | "stories" | ""
+): TFavorite[] => {
+  const result: string = localStorage.getItem(`${userId}-${type}`) || "";
+  return result !== "" ? JSON.parse(result) : [];
+};
+
+export const getStoragedUser = (): User => {
+  const result: string = localStorage.getItem("user") || "";
+  return result !== "" ? JSON.parse(result) : undefined;
 };

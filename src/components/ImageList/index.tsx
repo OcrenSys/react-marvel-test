@@ -8,7 +8,7 @@ import { REQUEST } from "../../utils/constant";
 import { TData, TThumbnail } from "../../types/Response";
 import TCharacter from "../../types/character";
 import TComic, { TComicExtended } from "../../types/comic";
-import TStory, { TStoryExtended } from "../../types/stories";
+import TStory, { TStoryExtended } from "../../types/story";
 import Paper from "@mui/material/Paper";
 import ImageList from "@mui/material/ImageList";
 import ImageListItem from "@mui/material/ImageListItem";

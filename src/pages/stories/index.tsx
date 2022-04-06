@@ -11,7 +11,7 @@ import { RETRIEVE_CHARACTERS } from "../../store/actions/characters.action";
 import { getSrc } from "../../utils/helpers";
 import TParameters from "../../types/parameters";
 import TOption from "../../types/TOption";
-import TStory from "../../types/stories";
+import TStory from "../../types/story";
 import useDebounce from "../../hooks/useDebounce";
 
 const CardComponent = React.lazy(
@@ -175,7 +175,7 @@ const Stories = (): React.ReactElement => {
                     story?.thumbnail?.path,
                     story?.thumbnail?.extension
                   )}
-                  description={`${story.description}`}
+                  entity={story}
                   onRedirect={() => handleRedirect(story.id)}
                 />
               </Suspense>

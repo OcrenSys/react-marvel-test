@@ -15,6 +15,10 @@ const routesApi =  {
         details: (id: number | string ): string =>  `/stories/${id}`,
         characters: (id: number | string ): string =>  `/stories/${id}/characters`
     },
+
+    auth: {
+        user: '/users/user_id'
+    }
 }
 
 export default routesApi;

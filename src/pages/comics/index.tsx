@@ -152,7 +152,7 @@ const Comics = (): React.ReactElement => {
                     comic?.thumbnail?.path,
                     comic?.thumbnail?.extension
                   )}
-                  description={`${comic.description}`}
+                  entity={comic}
                   onRedirect={() => handleRedirect(comic.id)}
                 />
               </Suspense>

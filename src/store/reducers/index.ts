@@ -8,6 +8,7 @@ import comicsReducer, {
   comicCharactersReducer,
   comicDetailsReducer,
 } from "./comics.reducer";
+import favoriteReducer from "./favorites.reducer";
 import storiesReducer, {
   storyCharactersReducer,
   storyDetailsReducer,
@@ -27,4 +28,6 @@ export default combineReducers({
   stories: storiesReducer,
   storyDetails: storyDetailsReducer,
   storyCharacters: storyCharactersReducer,
+  /* FAVORITE SECTION */
+  favorites: favoriteReducer,
 });

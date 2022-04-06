@@ -1,7 +1,7 @@
 import { TGeneric, TThumbnail, TUrl } from "./Response";
 
 type TCharacter = {
-  id: number | string;
+  id: number;
   name: string;
   description: string;
   modified: string;
